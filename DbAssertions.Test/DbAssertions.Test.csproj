@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -11,6 +11,7 @@
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Microsoft.SqlServer.Types" Version="14.0.1016.290" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
@@ -22,217 +23,643 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[dbo].[AWBuildVersion].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[dbo].[AWBuildVersion].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[dbo].[DatabaseLog].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[dbo].[DatabaseLog].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[dbo].[ErrorLog].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[dbo].[ErrorLog].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[Department].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[Department].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[EmployeeDepartmentHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[EmployeeDepartmentHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[EmployeePayHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[EmployeePayHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[Employee].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[Employee].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[JobCandidate].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[JobCandidate].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[HumanResources].[Shift].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[HumanResources].[Shift].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[AddressType].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[AddressType].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[Address].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[Address].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[BusinessEntityAddress].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[BusinessEntityAddress].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[BusinessEntityContact].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[BusinessEntityContact].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[BusinessEntity].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[BusinessEntity].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[ContactType].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[ContactType].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[CountryRegion].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[CountryRegion].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[EmailAddress].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[EmailAddress].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[Password].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[Password].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[PersonPhone].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[PersonPhone].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[Person].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[Person].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[PhoneNumberType].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[PhoneNumberType].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Person].[StateProvince].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Person].[StateProvince].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[BillOfMaterials].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[BillOfMaterials].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[Culture].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[Culture].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[Document].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[Document].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[Illustration].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[Illustration].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[Location].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[Location].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductCategory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductCategory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductCostHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductCostHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductDescription].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductDescription].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductDocument].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductDocument].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductInventory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductInventory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductListPriceHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductListPriceHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductModelIllustration].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductModelIllustration].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductModelProductDescriptionCulture].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductModelProductDescriptionCulture].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductModel].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductModel].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductPhoto].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductPhoto].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductProductPhoto].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductProductPhoto].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductReview].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductReview].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ProductSubcategory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ProductSubcategory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[Product].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[Product].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[ScrapReason].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[ScrapReason].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[TransactionHistoryArchive].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[TransactionHistoryArchive].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[TransactionHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[TransactionHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[UnitMeasure].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[UnitMeasure].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[WorkOrderRouting].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[WorkOrderRouting].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Production].[WorkOrder].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Production].[WorkOrder].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Purchasing].[ProductVendor].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Purchasing].[ProductVendor].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Purchasing].[PurchaseOrderDetail].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Purchasing].[PurchaseOrderDetail].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Purchasing].[PurchaseOrderHeader].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Purchasing].[PurchaseOrderHeader].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Purchasing].[ShipMethod].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Purchasing].[ShipMethod].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Purchasing].[Vendor].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Purchasing].[Vendor].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[CountryRegionCurrency].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[CountryRegionCurrency].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[CreditCard].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[CreditCard].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[CurrencyRate].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[CurrencyRate].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[Currency].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[Currency].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[Customer].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[Customer].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[PersonCreditCard].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[PersonCreditCard].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesOrderDetail].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesOrderDetail].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesOrderHeaderSalesReason].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesOrderHeaderSalesReason].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesOrderHeader].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesOrderHeader].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesPersonQuotaHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesPersonQuotaHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesPerson].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesPerson].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesReason].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesReason].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesTaxRate].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesTaxRate].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesTerritoryHistory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesTerritoryHistory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SalesTerritory].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SalesTerritory].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[ShoppingCartItem].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[ShoppingCartItem].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SpecialOfferProduct].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SpecialOfferProduct].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[SpecialOffer].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[SpecialOffer].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="DatabaseTest\First\ToBeExported\[AdventureWorks].[Sales].[Store].csv">
+    <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[Sales].[Store].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[dbo].[AWBuildVersion].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[dbo].[DatabaseLog].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[dbo].[ErrorLog].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[Department].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[EmployeeDepartmentHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[EmployeePayHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[Employee].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[JobCandidate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[HumanResources].[Shift].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[AddressType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[Address].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[BusinessEntityAddress].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[BusinessEntityContact].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[BusinessEntity].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[ContactType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[CountryRegion].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[EmailAddress].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[Password].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[PersonPhone].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[Person].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[PhoneNumberType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Person].[StateProvince].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[BillOfMaterials].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[Culture].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[Document].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[Illustration].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[Location].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductCategory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductCostHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductDescription].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductDocument].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductInventory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductListPriceHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductModelIllustration].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductModelProductDescriptionCulture].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductModel].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductPhoto].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductProductPhoto].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductReview].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ProductSubcategory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[Product].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[ScrapReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[TransactionHistoryArchive].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[TransactionHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[UnitMeasure].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[WorkOrderRouting].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Production].[WorkOrder].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Purchasing].[ProductVendor].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Purchasing].[PurchaseOrderDetail].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Purchasing].[PurchaseOrderHeader].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Purchasing].[ShipMethod].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Purchasing].[Vendor].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[CountryRegionCurrency].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[CreditCard].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[CurrencyRate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[Currency].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[Customer].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[PersonCreditCard].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesOrderDetail].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesOrderHeaderSalesReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesOrderHeader].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesPersonQuotaHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesPerson].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesTaxRate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesTerritoryHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SalesTerritory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[ShoppingCartItem].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SpecialOfferProduct].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[SpecialOffer].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\SecondExport\ToBeExported\First\[AdventureWorks].[Sales].[Store].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[dbo].[AWBuildVersion].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[dbo].[DatabaseLog].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[dbo].[ErrorLog].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[Department].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[EmployeeDepartmentHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[EmployeePayHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[Employee].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[JobCandidate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[HumanResources].[Shift].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[AddressType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[Address].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[BusinessEntityAddress].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[BusinessEntityContact].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[BusinessEntity].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[ContactType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[CountryRegion].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[EmailAddress].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[Password].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[PersonPhone].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[Person].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[PhoneNumberType].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Person].[StateProvince].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[BillOfMaterials].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[Culture].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[Document].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[Illustration].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[Location].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductCategory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductCostHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductDescription].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductDocument].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductInventory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductListPriceHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductModelIllustration].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductModelProductDescriptionCulture].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductModel].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductPhoto].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductProductPhoto].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductReview].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ProductSubcategory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[Product].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[ScrapReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[TransactionHistoryArchive].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[TransactionHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[UnitMeasure].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[WorkOrderRouting].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Production].[WorkOrder].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Purchasing].[ProductVendor].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Purchasing].[PurchaseOrderDetail].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Purchasing].[PurchaseOrderHeader].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Purchasing].[ShipMethod].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Purchasing].[Vendor].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[CountryRegionCurrency].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[CreditCard].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[CurrencyRate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[Currency].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[Customer].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[PersonCreditCard].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesOrderDetail].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesOrderHeaderSalesReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesOrderHeader].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesPersonQuotaHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesPerson].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesReason].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesTaxRate].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesTerritoryHistory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SalesTerritory].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[ShoppingCartItem].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SpecialOfferProduct].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[SpecialOffer].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\FirstExport\ToBeExported\[AdventureWorks].[Sales].[Store].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

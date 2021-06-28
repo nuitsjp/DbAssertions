@@ -15,6 +15,12 @@ namespace DbAssertions
 
         public static DirectoryInfo ReCreate(this DirectoryInfo directoryInfo)
         {
+            directoryInfo.ForceDelete(true).Create();
+            return directoryInfo;
+        }
+
+        public static DirectoryInfo ForceDelete(this DirectoryInfo directoryInfo, bool recurse = false)
+        {
             try
             {
                 // 対象ディレクトリを削除や生成した直後に呼ぶと、存在チェックがファイルキャッシュで正しく動作しない
@@ -25,7 +31,7 @@ namespace DbAssertions
             {
                 // 例外を握りつぶす
             }
-            directoryInfo.Create();
+
             return directoryInfo;
         }
 
