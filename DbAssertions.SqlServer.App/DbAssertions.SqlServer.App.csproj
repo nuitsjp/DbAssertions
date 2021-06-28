@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DbAssertions\DbAssertions.csproj" />
+    <ProjectReference Include="..\DbAssertions.SqlServer\DbAssertions.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

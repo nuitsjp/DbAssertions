@@ -1,15 +1,16 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using DbAssertions.SqlServer;
 using FluentAssertions;
 using Xunit;
 
-namespace DbAssertions.Test
+namespace DbAssertions.Test.SqlServer
 {
-    public class DatabaseTest
+    public class SqlDatabaseTest
     {
-        protected readonly Database Database = new("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
-        public class FirstExport : DatabaseTest
+        protected readonly Database Database = new SqlDatabase("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
+        public class FirstExport : SqlDatabaseTest
         {
             private readonly DirectoryInfo _first = new DirectoryInfo("FirstActual").ReCreate();
 
@@ -22,7 +23,7 @@ namespace DbAssertions.Test
             }
         }
 
-        public class SecondExport : DatabaseTest
+        public class SecondExport : SqlDatabaseTest
         {
             [Fact]
             public void ToBeExported()
@@ -54,7 +55,7 @@ namespace DbAssertions.Test
             }
         }
 
-        public class Compare : DatabaseTest
+        public class Compare : SqlDatabaseTest
         {
             [Fact]
             public void Matches()

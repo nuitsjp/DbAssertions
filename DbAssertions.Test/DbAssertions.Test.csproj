@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DbAssertions.SqlServer\DbAssertions.SqlServer.csproj" />
     <ProjectReference Include="..\DbAssertions\DbAssertions.csproj" />
   </ItemGroup>
 

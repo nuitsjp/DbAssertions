@@ -47,7 +47,7 @@ namespace DbAssertions
         /// <param name="tableName"></param>
         /// <param name="columnName"></param>
         /// <param name="columnType"></param>
-        internal Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType)
+        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType)
         {
             _tableName = tableName;
             _columnName = columnName;

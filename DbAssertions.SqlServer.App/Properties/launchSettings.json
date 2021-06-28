@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DbAssertions.SqlServer.App": {
+      "commandName": "Project",
+      "commandLineArgs": "first -s localhost -d AdventureWorks -u sa -p P@ssw0rd!"
+    }
+  }
+}

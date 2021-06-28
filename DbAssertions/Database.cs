@@ -1,72 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dapper;
 using ICSharpCode.SharpZipLib.Zip;
-#if NET40
-using System.Data.SqlClient;
-#else
-using Microsoft.Data.SqlClient;
-#endif
 
 namespace DbAssertions
 {
     /// <summary>
     /// テスト対象のデータベースを表す。
     /// </summary>
-    public class Database
+    public abstract class Database
     {
-        /// <summary>
-        /// サーバー
-        /// </summary>
-        public string Server { get; }
-
         /// <summary>
         /// データベース
         /// </summary>
         public string DatabaseName { get; }
 
         /// <summary>
-        /// ユーザーID
-        /// </summary>
-        public string UserId { get; }
-
-        /// <summary>
-        /// パスワード
-        /// </summary>
-        public string Password { get; }
-
-        /// <summary>
         /// インスタンスを初期化する
         /// </summary>
-        /// <param name="server"></param>
         /// <param name="databaseName"></param>
-        /// <param name="userId"></param>
-        /// <param name="password"></param>
-        public Database(string server, string databaseName, string userId, string password)
+        protected Database(string databaseName)
         {
-            Server = server;
             DatabaseName = databaseName;
-            UserId = userId;
-            Password = password;
         }
 
         /// <summary>
         /// 接続文字列を取得する
         /// </summary>
-        public string ConnectionString => new SqlConnectionStringBuilder
-        {
-            DataSource = Server,
-            UserID = UserId,
-            Password = Password,
-            InitialCatalog = DatabaseName
-        }.ToString();
+        public abstract string ConnectionString { get; }
+
+        public abstract IDbConnection OpenConnection();
 
         /// <summary>
         /// 1回目のエクスポートを実行する
@@ -299,12 +268,12 @@ from
 {(primaryKeys.Any() ? "order by" : string.Empty)}
     {string.Join(", ", primaryKeys)}";
 
-            using var connection = new SqlConnection(ConnectionString);
-            connection.Open();
+            using var connection = OpenConnection();
 
             using var expectedCsv = new CsvWriter(new StreamWriter(fileInfo.Open(FileMode.Create)));
 
-            using var command = new SqlCommand(query, connection);
+            using var command = connection.CreateCommand();
+            command.CommandText = query;
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -337,106 +306,15 @@ from
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        private IList<Table> GetTables()
-        {
-            using var connection = new SqlConnection(ConnectionString);
-            connection.Open();
-
-            var query = @$"
-use {DatabaseName};
-
-select 
-	'{DatabaseName}' as [DatabaseName],
-	schema_name(schema_id) as [SchemaName],
-	name as [TableName]
-from 
-	sys.objects 
-where 
-	type = 'U'
-order by 
-	[DatabaseName],
-	[SchemaName],
-	[TableName];";
-            return connection.Query<Table>(query).ToList();
-        }
+        protected abstract IList<Table> GetTables();
 
         /// <summary>
         /// テーブルの列を取得する。
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
-        public IList<Column> GetTableColumns(Table table)
-        {
-            using var connection = new SqlConnection(ConnectionString);
-            connection.Open();
+        protected abstract IList<Column> GetTableColumns(Table table);
 
-            var query = @"
-select
-	schemas.name as SchemaName,
-	columns.name as ColumnName,
-	system_type_id as SystemTypeId
-from
-	sys.columns
-	inner join sys.tables
-		on	columns.object_id = tables.object_id
-	inner join sys.schemas
-		on	tables.schema_id = schemas.schema_id
-where
-	tables.name = @TableName
-order by
-	column_id
-";
-
-            return connection
-                .Query(
-                    query,
-                    new { TableName = table.TableName })
-                .Select(x =>
-                {
-                    return new Column(
-                        DatabaseName,
-                        x.SchemaName,
-                        table.TableName,
-                        (string)x.ColumnName,
-                        (byte)x.SystemTypeId switch
-                        {
-                            (byte)ColumnType.VarBinary => ColumnType.VarBinary,
-                            (byte)ColumnType.DateTime => ColumnType.DateTime,
-                            _ => ColumnType.Other
-                        });
-                })
-                .ToList();
-        }
-
-        public IList<string> GetPrimaryKeys(Table table)
-        {
-            using var connection = new SqlConnection(ConnectionString);
-            connection.Open();
-
-            var query = @"
-select
-	columns.name as Name
-from
-	sys.tables
-	inner join sys.key_constraints
-		on tables.object_id = key_constraints.parent_object_id AND key_constraints.type = 'PK'
-	inner join sys.index_columns
-		on key_constraints.parent_object_id = index_columns.object_id
-		and key_constraints.unique_index_id  = index_columns.index_id
-	inner join sys.columns
-		on index_columns.object_id = columns.object_id
-		and index_columns.column_id = columns.column_id
-where
-	tables.name = @TableName
-order by
-	index_columns.key_ordinal";
-
-            return connection
-                .Query(
-                    query,
-                    new {TableName = table.TableName})
-                .Select(x => (string)x.Name)
-                .ToList();
-        }
+        protected abstract IList<string> GetPrimaryKeys(Table table);
     }
 }

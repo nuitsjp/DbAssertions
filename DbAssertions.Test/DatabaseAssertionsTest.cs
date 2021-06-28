@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using DbAssertions.SqlServer;
 using FluentAssertions;
 using Xunit;
 
@@ -9,7 +10,7 @@ namespace DbAssertions.Test
     {
         public class BeAsExpected
         {
-            private readonly Database _database = new("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
+            private readonly Database _database = new SqlDatabase("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
 
             [Fact]
             public void Matches()

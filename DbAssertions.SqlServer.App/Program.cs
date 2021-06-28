@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using ConsoleAppFramework;
+using DbAssertions.SqlServer;
 using Microsoft.Extensions.Hosting;
 
 namespace DbAssertions.App
@@ -26,7 +27,7 @@ namespace DbAssertions.App
             [Option("p", "パスワード")] string password,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
-            new Database(server, database, userId, password).FirstExport(new DirectoryInfo(output));
+            new SqlDatabase(server, database, userId, password).FirstExport(new DirectoryInfo(output));
         }
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace DbAssertions.App
             [Option("p", "パスワード")] string password,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
-            new Database(server, database, userId, password).SecondExport(new DirectoryInfo(output));
+            new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output));
         }
     }
 }
