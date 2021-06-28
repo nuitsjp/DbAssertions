@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DatabaseTest\Compare\ExpectedAdventureWorks.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[AdventureWorks].[dbo].[AWBuildVersion].csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

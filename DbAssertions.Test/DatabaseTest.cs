@@ -53,6 +53,43 @@ namespace DbAssertions.Test
                 }
             }
         }
+
+        public class Compare : DatabaseTest
+        {
+            [Fact]
+            public void Matches()
+            {
+                var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
+
+                var compareResult = new CompareResult();
+                Database.Compare(
+                    new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
+                    workDirectory,
+                    compareResult,
+                    DateTime.Parse("2011/05/30 0:00:00"),
+                    new []{new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) });
+
+                compareResult.HasMismatched
+                    .Should().BeFalse();
+            }
+
+            [Fact]
+            public void UnMatches()
+            {
+                var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
+
+                var compareResult = new CompareResult();
+                Database.Compare(
+                    new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
+                    workDirectory,
+                    compareResult,
+                    DateTime.Parse("2011/05/31 0:00:01"),
+                    new[] { new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) });
+
+                compareResult.HasMismatched
+                    .Should().BeTrue();
+            }
+        }
     }
 
     public static class ZipArchiveEntryExtensions
