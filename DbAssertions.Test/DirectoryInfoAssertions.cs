@@ -20,7 +20,7 @@ namespace DbAssertions.Test
             Subject = instance;
         }
 
-        protected override string Identifier => "directory";
+        protected override string Context => "directory";
 
         /// <summary>
         /// 比較対象のディレクトリが同じコンテンツを保持しているかどうか評価する

@@ -20,7 +20,7 @@ namespace DbAssertions.Test
         }
 
 
-        protected override string Identifier => "file";
+        protected override string Context => "file";
 
         /// <summary>
         /// ファイルが期待値と一致するかどうか判定する

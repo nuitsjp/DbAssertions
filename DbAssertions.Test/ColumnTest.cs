@@ -25,7 +25,7 @@ namespace DbAssertions.Test
                 Column column = new("database", "schema", "table", "column", ColumnType.Other);
                 var value = "value";
                 column.Invoking(x => x.ToExpected(value, "not value", 1))
-                    .Should().Throw<DbAssertionsException>();
+                    .ShouldThrow<DbAssertionsException>();
             }
 
 
@@ -35,7 +35,7 @@ namespace DbAssertions.Test
                 Column column = new("database", "schema", "table", "column", ColumnType.VarBinary);
                 var value = "value";
                 column.Invoking(x => x.ToExpected(value, "not value", 1))
-                    .Should().Throw<DbAssertionsException>();
+                    .ShouldThrow<DbAssertionsException>();
             }
 
             [Fact]
@@ -43,7 +43,7 @@ namespace DbAssertions.Test
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
                 column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
-                    .Should().Throw<DbAssertionsException>();
+                    .ShouldThrow<DbAssertionsException>();
             }
 
             [Fact]
@@ -51,7 +51,7 @@ namespace DbAssertions.Test
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
                 column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
-                    .Should().Throw<DbAssertionsException>();
+                    .ShouldThrow<DbAssertionsException>();
             }
 
             [Fact]
@@ -68,7 +68,7 @@ namespace DbAssertions.Test
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
                 column.Invoking(x => x.ToExpected("2000/01/02", "2000/01/01", 1))
-                    .Should().Throw<DbAssertionsException>();
+                    .ShouldThrow<DbAssertionsException>();
 
             }
         }
