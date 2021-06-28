@@ -13,7 +13,7 @@ namespace DbAssertions
         public static FileInfo GetFile(this DirectoryInfo directoryInfo, string relativePath)
             => new(Path.Combine(directoryInfo.FullName, relativePath));
 
-        public static void ReCreate(this DirectoryInfo directoryInfo)
+        public static DirectoryInfo ReCreate(this DirectoryInfo directoryInfo)
         {
             try
             {
@@ -26,6 +26,7 @@ namespace DbAssertions
                 // 例外を握りつぶす
             }
             directoryInfo.Create();
+            return directoryInfo;
         }
 
         public static bool NotExist(this DirectoryInfo directoryInfo) => !directoryInfo.Exists;

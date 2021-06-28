@@ -49,7 +49,6 @@ namespace DbAssertions
         /// <param name="databaseName"></param>
         /// <param name="userId"></param>
         /// <param name="password"></param>
-        /// <param name="testCase"></param>
         public Database(string server, string databaseName, string userId, string password)
         {
             Server = server;
@@ -294,7 +293,7 @@ namespace DbAssertions
 
             var query = @$"
 select
-    {string.Join(", ", columns.Select(x => x.ColumnName))}
+    {string.Join(", ", columns.Select(x => $"[{x.ColumnName}]"))}
 from
     {table}
 {(primaryKeys.Any() ? "order by" : string.Empty)}
@@ -306,20 +305,26 @@ from
             using var expectedCsv = new CsvWriter(new StreamWriter(fileInfo.Open(FileMode.Create)));
 
             using var command = new SqlCommand(query, connection);
+
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
                 foreach (var column in columns)
                 {
-                    if (column.ColumnType == ColumnType.VarBinary)
+                    var value = reader[column.ColumnName];
+                    if (value == DBNull.Value)
+                    {
+                        expectedCsv.WriteField(null);
+                    }
+                    else if (column.ColumnType == ColumnType.VarBinary)
                     {
                         using var sha256 = SHA256.Create();
-                        var hash = sha256.ComputeHash((byte[])reader[column.ColumnName]);
+                        var hash = sha256.ComputeHash((byte[])value);
                         expectedCsv.WriteField(string.Concat(hash.Select(b => $"{b:x2}")));
                     }
                     else
                     {
-                        expectedCsv.WriteField(reader[column.ColumnName]);
+                        expectedCsv.WriteField(value);
                     }
                 }
                 expectedCsv.NextRecord();
