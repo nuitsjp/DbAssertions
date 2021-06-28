@@ -311,13 +311,13 @@ from
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected abstract IList<Table> GetTables();
+        protected abstract List<Table> GetTables();
 
         /// <summary>
         /// テーブルの列を取得する。
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
-        protected abstract IList<Column> GetTableColumns(Table table);
+        protected abstract List<Column> GetTableColumns(Table table);
     }
 }

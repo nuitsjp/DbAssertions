@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Dapper;
 #if NET40
 using System.Data.SqlClient;
 #else
@@ -57,11 +56,12 @@ namespace DbAssertions.SqlServer
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected override IList<Table> GetTables()
+        protected override List<Table> GetTables()
         {
             using var connection = OpenConnection();
+            using var command = connection.CreateCommand();
 
-            var query = @$"
+            command.CommandText = @$"
 use {DatabaseName};
 
 select 
@@ -76,7 +76,19 @@ order by
 	[DatabaseName],
 	[SchemaName],
 	[TableName];";
-            return connection.Query<Table>(query).ToList();
+            using var reader = command.ExecuteReader();
+            List<Table> tables = new();
+            while (reader.Read())
+            {
+                tables.Add(
+                    new Table(
+                        (string) reader["DatabaseName"],
+                        (string) reader["SchemaName"],
+                        (string) reader["TableName"]
+                    ));
+            }
+
+            return tables;
         }
 
         /// <summary>
@@ -84,11 +96,12 @@ order by
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
-        protected override IList<Column> GetTableColumns(Table table)
+        protected override List<Column> GetTableColumns(Table table)
         {
-            using var connection = OpenConnection();
+            using var connection = OpenConnection(); 
+            using var command = connection.CreateCommand();
 
-            var query = @$"
+            command.CommandText = @$"
 use {DatabaseName};
 
 select
@@ -123,28 +136,38 @@ where
 order by
 	columns.column_id
 ";
+            var schemaNameParameter = command.CreateParameter();
+            schemaNameParameter.ParameterName = "SchemaName";
+            schemaNameParameter.Value = table.SchemaName;
+            command.Parameters.Add(schemaNameParameter);
 
-            return connection
-                .Query(
-                    query,
-                    new { table.SchemaName, table.TableName })
-                .Select(x =>
-                {
-                    return new Column(
+            var tableNameParameter = command.CreateParameter();
+            tableNameParameter.ParameterName = "TableName";
+            tableNameParameter.Value = table.TableName;
+            command.Parameters.Add(tableNameParameter);
+
+            using var reader = command.ExecuteReader();
+
+            List<Column> columns = new();
+            while (reader.Read())
+            {
+                columns.Add(
+                    new Column(
                         DatabaseName,
-                        x.SchemaName,
+                        (string) reader["SchemaName"],
                         table.TableName,
-                        (string)x.ColumnName,
-                        (byte)x.SystemTypeId switch
+                        (string) reader["ColumnName"],
+                        (byte) reader["SystemTypeId"] switch
                         {
-                            (byte)ColumnType.VarBinary => ColumnType.VarBinary,
-                            (byte)ColumnType.DateTime => ColumnType.DateTime,
+                            (byte) ColumnType.VarBinary => ColumnType.VarBinary,
+                            (byte) ColumnType.DateTime => ColumnType.DateTime,
                             _ => ColumnType.Other
                         },
-                        x.IsPrimaryKey,
-                        x.PrimaryKeyOrdinal);
-                })
-                .ToList();
+                        Convert.ToBoolean(reader["IsPrimaryKey"]),
+                        (int) reader["PrimaryKeyOrdinal"]));
+            }
+
+            return columns;
         }
     }
 }
