@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DbAssertions.App": {
+      "commandName": "Project",
+      "commandLineArgs": "second -s localhost -d DFS -u sa -p &6yhNmju7 -o Main"
+    }
+  }
+}
