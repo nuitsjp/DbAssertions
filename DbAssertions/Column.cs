@@ -12,7 +12,7 @@ namespace DbAssertions
         /// <summary>
         /// 実行ごとに値が変わるセルを表す文字列
         /// </summary>
-        private const string TimeAfterStart = "TimeAfterStart";
+        internal const string TimeAfterStart = "TimeAfterStart";
 
         /// <summary>
         /// データベース名
@@ -137,9 +137,14 @@ namespace DbAssertions
 
             if (matchedLifeCycleColumns.Any(x => x.LifeCycle == LifeCycle.Daily))
             {
-                // 実行時ではなく、日次で更新される値は無条件に一致とする
+                // 実行時ではなく、日次で更新される値は日付書式なら一致とする
                 // これを増やしすぎるとテストにならないので要注意
-                return true;
+                if (DateTime.TryParse(actualCell, out _))
+                {
+                    return true;
+                }
+
+                return false;
             }
 
             if (Equals(expectedCell, TimeAfterStart))
