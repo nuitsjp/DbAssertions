@@ -8,7 +8,5 @@ namespace DbAssertions
     public static class FileInfoExtensions
     {
         public static byte[] ReadAllBytes(this FileInfo fileInfo) => File.ReadAllBytes(fileInfo.FullName);
-
-        public static bool NotExist(this FileInfo fileInfo) => !fileInfo.Exists;
     }
 }
