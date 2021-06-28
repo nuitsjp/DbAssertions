@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -183,6 +184,10 @@ namespace DbAssertions
             using var compressStreamA = expectedFileInfo.OpenRead();
             using var zipFile = new ZipFile(compressStreamA);
 
+            // データをExportしたときに文字列化する。その際の精度の問題で開始時刻より、実施時刻が前になることがある
+            // 一旦この形で対応する
+            var timeBeforeStart = DateTime.Parse(setupCompletionTime.ToString(CultureInfo.InvariantCulture));
+
             var lifeCycleColumnsArray = lifeCycleColumns as LifeCycleColumn[] ?? lifeCycleColumns.ToArray();
 
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
@@ -238,9 +243,16 @@ namespace DbAssertions
                         var column = columns[columnNumber];
                         var expectedRecordCell = expectedRecordCells[columnNumber];
                         var actualRecordCell = actualRecordCells[columnNumber];
-                        if (!column.Compare(expectedRecordCell, actualRecordCell, lifeCycleColumnsArray, setupCompletionTime))
+                        if (!column.Compare(expectedRecordCell, actualRecordCell, lifeCycleColumnsArray, timeBeforeStart))
                         {
-                            compareResult.AddMismatchedMessage($@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。期待値 {expectedRecordCell} 、実際値 {actualRecordCell}。");
+                            if (expectedRecordCell == Column.TimeAfterStart)
+                            {
+                                compareResult.AddMismatchedMessage($@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。DB初期化完了時刻 {timeBeforeStart} 、実際値 {actualRecordCell}。");
+                            }
+                            else
+                            {
+                                compareResult.AddMismatchedMessage($@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。期待値 {expectedRecordCell} 、実際値 {actualRecordCell}。");
+                            }
                         }
                     }
                 }
@@ -280,31 +292,39 @@ from
             using var command = connection.CreateCommand();
             command.CommandText = query;
 
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
+            try
             {
-                foreach (var column in columns)
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    var value = reader[column.ColumnName];
-                    if (value == DBNull.Value)
+                    foreach (var column in columns)
                     {
-                        expectedCsv.WriteField(null);
+                        var value = reader[column.ColumnName];
+                        if (value == DBNull.Value)
+                        {
+                            expectedCsv.WriteField(null);
+                        }
+                        else if (column.ColumnType == ColumnType.VarBinary)
+                        {
+                            using var sha256 = SHA256.Create();
+                            var hash = sha256.ComputeHash((byte[])value);
+                            expectedCsv.WriteField(string.Concat(hash.Select(b => $"{b:x2}")));
+                        }
+                        else
+                        {
+                            expectedCsv.WriteField(value);
+                        }
                     }
-                    else if (column.ColumnType == ColumnType.VarBinary)
-                    {
-                        using var sha256 = SHA256.Create();
-                        var hash = sha256.ComputeHash((byte[])value);
-                        expectedCsv.WriteField(string.Concat(hash.Select(b => $"{b:x2}")));
-                    }
-                    else
-                    {
-                        expectedCsv.WriteField(value);
-                    }
+                    expectedCsv.NextRecord();
                 }
-                expectedCsv.NextRecord();
-            }
 
-            return fileInfo;
+                return fileInfo;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         /// <summary>
