@@ -123,7 +123,7 @@ from
 		on	columns.object_id = tables.object_id
 	inner join sys.schemas
 		on	tables.schema_id = schemas.schema_id
-	inner join sys.key_constraints as pk_constraints
+	left outer join sys.key_constraints as pk_constraints
 		on tables.object_id = pk_constraints.parent_object_id AND pk_constraints.type = 'PK'
 	left outer join sys.index_columns
 		on pk_constraints.parent_object_id = index_columns.object_id
