@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/nuitsjp/DbAssertions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nuitsjp/DbAssertions</RepositoryUrl>
     <PackageTags>database xunit fluentassertion</PackageTags>
+    <PackageIcon>nuits.jp.128x128.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
@@ -32,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="nuits.jp.128x128.png">
+    <None Include="..\nuits.jp.128x128.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
