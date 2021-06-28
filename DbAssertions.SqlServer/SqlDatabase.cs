@@ -88,27 +88,46 @@ order by
         {
             using var connection = OpenConnection();
 
-            var query = @"
+            var query = @$"
+use {DatabaseName};
+
 select
 	schemas.name as SchemaName,
+	tables.name as TableName,
 	columns.name as ColumnName,
-	system_type_id as SystemTypeId
+	system_type_id as SystemTypeId,
+	case
+		when index_columns.OBJECT_ID is not null then convert(bit, 1)
+		else convert(bit, 0)
+	end as IsPrimaryKey,
+	case
+		when index_columns.key_ordinal is not null then index_columns.key_ordinal
+		else 0
+	end as PrimaryKeyOrdinal
 from
 	sys.columns
 	inner join sys.tables
 		on	columns.object_id = tables.object_id
 	inner join sys.schemas
 		on	tables.schema_id = schemas.schema_id
+	inner join sys.key_constraints as pk_constraints
+		on tables.object_id = pk_constraints.parent_object_id AND pk_constraints.type = 'PK'
+	left outer join sys.index_columns
+		on pk_constraints.parent_object_id = index_columns.object_id
+		and pk_constraints.unique_index_id  = index_columns.index_id
+		and index_columns.object_id = columns.object_id
+		and index_columns.column_id = columns.column_id
 where
-	tables.name = @TableName
+	schemas.name = @SchemaName
+	and tables.name = @TableName
 order by
-	column_id
+	columns.column_id
 ";
 
             return connection
                 .Query(
                     query,
-                    new { TableName = table.TableName })
+                    new { table.SchemaName, table.TableName })
                 .Select(x =>
                 {
                     return new Column(
@@ -121,40 +140,11 @@ order by
                             (byte)ColumnType.VarBinary => ColumnType.VarBinary,
                             (byte)ColumnType.DateTime => ColumnType.DateTime,
                             _ => ColumnType.Other
-                        });
+                        },
+                        x.IsPrimaryKey,
+                        x.PrimaryKeyOrdinal);
                 })
                 .ToList();
         }
-
-        protected override IList<string> GetPrimaryKeys(Table table)
-        {
-            using var connection = OpenConnection();
-
-            var query = @"
-select
-	columns.name as Name
-from
-	sys.tables
-	inner join sys.key_constraints
-		on tables.object_id = key_constraints.parent_object_id AND key_constraints.type = 'PK'
-	inner join sys.index_columns
-		on key_constraints.parent_object_id = index_columns.object_id
-		and key_constraints.unique_index_id  = index_columns.index_id
-	inner join sys.columns
-		on index_columns.object_id = columns.object_id
-		and index_columns.column_id = columns.column_id
-where
-	tables.name = @TableName
-order by
-	index_columns.key_ordinal";
-
-            return connection
-                .Query(
-                    query,
-                    new { TableName = table.TableName })
-                .Select(x => (string)x.Name)
-                .ToList();
-        }
-
     }
 }

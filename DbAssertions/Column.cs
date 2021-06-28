@@ -47,11 +47,15 @@ namespace DbAssertions
         /// <param name="tableName"></param>
         /// <param name="columnName"></param>
         /// <param name="columnType"></param>
-        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType)
+        /// <param name="isPrimaryKey"></param>
+        /// <param name="primaryKeyOrdinal"></param>
+        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType, bool isPrimaryKey, int primaryKeyOrdinal)
         {
             _tableName = tableName;
             _columnName = columnName;
             _columnType = columnType;
+            IsPrimaryKey = isPrimaryKey;
+            PrimaryKeyOrdinal = primaryKeyOrdinal;
             _databaseName = databaseName;
             _schemaName = schemaName;
         }
@@ -59,6 +63,10 @@ namespace DbAssertions
         public string ColumnName => _columnName;
 
         public ColumnType ColumnType => _columnType;
+
+        public bool IsPrimaryKey { get; }
+
+        public int PrimaryKeyOrdinal { get; }
 
         /// <summary>
         /// 値を比較し、期待結果ファイルに設定すべき値に変換する

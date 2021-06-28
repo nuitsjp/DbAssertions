@@ -258,7 +258,12 @@ namespace DbAssertions
             var fileInfo = directoryInfo.GetFile($"{table}.csv");
 
             var columns = GetTableColumns(table);
-            var primaryKeys = GetPrimaryKeys(table);
+            var primaryKeys =
+                columns
+                    .Where(x => x.IsPrimaryKey)
+                    .OrderBy(x => x.PrimaryKeyOrdinal)
+                    .Select(x => x.ColumnName)
+                    .ToArray();
 
             var query = @$"
 select
@@ -314,7 +319,5 @@ from
         /// <param name="table"></param>
         /// <returns></returns>
         protected abstract IList<Column> GetTableColumns(Table table);
-
-        protected abstract IList<string> GetPrimaryKeys(Table table);
     }
 }

@@ -13,7 +13,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_equal_Should_return_value()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other);
+                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
                 var value = "value";
                 column.ToExpected(value, value, 1)
                     .Should().Be(value);
@@ -22,7 +22,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_not_equal_and_Other_Should_throw_exception()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other);
+                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
                 var value = "value";
                 column.Invoking(x => x.ToExpected(value, "not value", 1))
                     .ShouldThrow<DbAssertionsException>();
@@ -32,7 +32,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_not_equal_and_VarBinary_Should_throw_exception()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.VarBinary);
+                Column column = new("database", "schema", "table", "column", ColumnType.VarBinary, true, 1);
                 var value = "value";
                 column.Invoking(x => x.ToExpected(value, "not value", 1))
                     .ShouldThrow<DbAssertionsException>();
@@ -41,7 +41,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_first_is_empty_and_DateTime_Should_throw_exception()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
                     .ShouldThrow<DbAssertionsException>();
             }
@@ -49,7 +49,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_second_is_empty_and_DateTime_Should_throw_exception()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
                     .ShouldThrow<DbAssertionsException>();
             }
@@ -57,7 +57,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_first_is_before_second_Should_return_TimeAfterStart()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 column.ToExpected("2000/01/01", "2000/01/02", 1)
                     .Should().Be(Column.TimeAfterStart);
 
@@ -66,7 +66,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_first_is_after_second_Should_throw_exception()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 column.Invoking(x => x.ToExpected("2000/01/02", "2000/01/01", 1))
                     .ShouldThrow<DbAssertionsException>();
 
@@ -78,7 +78,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_equal_Should_be_true()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other);
+                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
                 var value = "value";
                 column.Compare(value, value, Enumerable.Empty<LifeCycleColumn>(), DateTime.MaxValue)
                     .Should().BeTrue();
@@ -87,7 +87,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_not_equal_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other);
+                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
                 column.Compare("value1", "value2", Enumerable.Empty<LifeCycleColumn>(), DateTime.MaxValue)
                     .Should().BeFalse();
             }
@@ -95,7 +95,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycleColumn_and_expected_is_empty_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
@@ -106,7 +106,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycleColumn_and_actual_is_empty_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
@@ -117,7 +117,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycle_is_Daily_and_DateTime_format_Should_be_true()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
@@ -128,7 +128,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycle_is_Daily_and_not_DateTime_format_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
@@ -139,7 +139,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_after_timeBeforeStart_Should_be_true()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns = 
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
@@ -155,7 +155,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_before_timeBeforeStart_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
@@ -170,7 +170,7 @@ namespace DbAssertions.Test
             [Fact]
             public void When_LifeCycle_is_Runtime_and_expected_is_not_TimeAfterStart_Should_be_false()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime);
+                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
                 LifeCycleColumn[] lifeCycleColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
