@@ -9,14 +9,14 @@ namespace DbAssertions
     /// <summary>
     /// ZipFile拡張メソッドクラス
     /// </summary>
-    public static class ZipFileExtensions
+    internal static class ZipFileExtensions
     {
         /// <summary>
         /// すべてのZipEntryを取得する
         /// </summary>
         /// <param name="zipFile"></param>
         /// <returns></returns>
-        public static IEnumerable<ZipEntry> GetZipEntries(this ZipFile zipFile)
+        internal static IEnumerable<ZipEntry> GetZipEntries(this ZipFile zipFile)
         {
             foreach (ZipEntry zipEntry in zipFile)
             {
@@ -29,7 +29,7 @@ namespace DbAssertions
         /// </summary>
         /// <param name="zipEntry"></param>
         /// <returns></returns>
-        public static Table GetTable(this ZipEntry zipEntry) =>
+        internal static Table GetTable(this ZipEntry zipEntry) =>
             Table.Parse(
                 zipEntry.Name.Substring(zipEntry.Name.IndexOf("/", StringComparison.Ordinal) + 1));
     }

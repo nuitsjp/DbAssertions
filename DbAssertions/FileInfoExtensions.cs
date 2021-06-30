@@ -5,8 +5,8 @@ namespace DbAssertions
     /// <summary>
     /// FileInfo拡張メソッドクラス
     /// </summary>
-    public static class FileInfoExtensions
+    internal static class FileInfoExtensions
     {
-        public static byte[] ReadAllBytes(this FileInfo fileInfo) => File.ReadAllBytes(fileInfo.FullName);
+        internal static byte[] ReadAllBytes(this FileInfo fileInfo) => File.ReadAllBytes(fileInfo.FullName);
     }
 }

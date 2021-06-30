@@ -5,21 +5,21 @@ namespace DbAssertions
     /// <summary>
     /// DirectoryInfo拡張メソッドクラス
     /// </summary>
-    public static class DirectoryInfoExtensions
+    internal static class DirectoryInfoExtensions
     {
-        public static DirectoryInfo GetDirectory(this DirectoryInfo directoryInfo, string relativePath)
+        internal static DirectoryInfo GetDirectory(this DirectoryInfo directoryInfo, string relativePath)
             => new(Path.Combine(directoryInfo.FullName, relativePath));
 
-        public static FileInfo GetFile(this DirectoryInfo directoryInfo, string relativePath)
+        internal static FileInfo GetFile(this DirectoryInfo directoryInfo, string relativePath)
             => new(Path.Combine(directoryInfo.FullName, relativePath));
 
-        public static DirectoryInfo ReCreate(this DirectoryInfo directoryInfo)
+        internal static DirectoryInfo ReCreate(this DirectoryInfo directoryInfo)
         {
             directoryInfo.ForceDelete(true).Create();
             return directoryInfo;
         }
 
-        public static DirectoryInfo ForceDelete(this DirectoryInfo directoryInfo, bool recurse = false)
+        internal static DirectoryInfo ForceDelete(this DirectoryInfo directoryInfo, bool recurse = false)
         {
             try
             {
@@ -35,6 +35,6 @@ namespace DbAssertions
             return directoryInfo;
         }
 
-        public static bool NotExist(this DirectoryInfo directoryInfo) => !directoryInfo.Exists;
+        internal static bool NotExist(this DirectoryInfo directoryInfo) => !directoryInfo.Exists;
     }
 }
