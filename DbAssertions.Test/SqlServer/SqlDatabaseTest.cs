@@ -62,13 +62,11 @@ namespace DbAssertions.Test.SqlServer
             {
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
-                var compareResult = new CompareResult();
-                Database.Compare(
+                var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
-                    workDirectory,
-                    compareResult,
                     DateTime.Parse("2011/05/30 0:00:00"),
-                    new []{new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) });
+                    new []{new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    workDirectory);
 
                 compareResult.HasMismatched
                     .Should().BeFalse();
@@ -79,13 +77,11 @@ namespace DbAssertions.Test.SqlServer
             {
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
-                var compareResult = new CompareResult();
-                Database.Compare(
+                var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
-                    workDirectory,
-                    compareResult,
                     DateTime.Parse("2011/05/31 0:00:01"),
-                    new[] { new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) });
+                    new[] { new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    workDirectory);
 
                 compareResult.HasMismatched
                     .Should().BeTrue();

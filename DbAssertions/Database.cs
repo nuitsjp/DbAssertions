@@ -165,18 +165,16 @@ namespace DbAssertions
         /// データベースの値を比較する
         /// </summary>
         /// <param name="expectedFileInfo"></param>
-        /// <param name="directoryInfo"></param>
-        /// <param name="compareResult"></param>
         /// <param name="setupCompletionTime"></param>
         /// <param name="lifeCycleColumns"></param>
+        /// <param name="directoryInfo"></param>
         /// <param name="because"></param>
         /// <param name="becauseArgs"></param>
-        public void Compare(
+        public CompareResult Compare(
             FileInfo expectedFileInfo,
-            DirectoryInfo directoryInfo,
-            CompareResult compareResult,
             DateTime setupCompletionTime,
             IEnumerable<LifeCycleColumn> lifeCycleColumns,
+            DirectoryInfo directoryInfo,
             string because = "",
             params object[] becauseArgs)
         {
@@ -190,6 +188,7 @@ namespace DbAssertions
 
             var lifeCycleColumnsArray = lifeCycleColumns as LifeCycleColumn[] ?? lifeCycleColumns.ToArray();
 
+            CompareResult compareResult = new();
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
             Parallel.ForEach(zipFile.GetZipEntries().Where(x => x.Name.StartsWith($"[{DatabaseName}]")), zipEntry =>
             {
@@ -257,6 +256,8 @@ namespace DbAssertions
                     }
                 }
             });
+
+            return compareResult;
         }
 
         /// <summary>
