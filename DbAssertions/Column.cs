@@ -60,6 +60,8 @@ namespace DbAssertions
             _schemaName = schemaName;
         }
 
+        public string SchemaName => _schemaName;
+        public string TableName => _tableName;
         public string ColumnName => _columnName;
 
         public ColumnType ColumnType => _columnType;

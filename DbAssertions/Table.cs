@@ -13,13 +13,14 @@ namespace DbAssertions
         /// <summary>
         /// インスタンスを生成する
         /// </summary>
-        /// <param name="databaseName"></param>
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
-        public Table(string schemaName, string tableName)
+        /// <param name="columns"></param>
+        public Table(string schemaName, string tableName, List<Column> columns)
         {
             SchemaName = schemaName;
             TableName = tableName;
+            Columns = columns;
         }
 
         /// <summary>
@@ -32,30 +33,18 @@ namespace DbAssertions
         /// </summary>
         public string TableName { get; }
 
+        public IList<Column> Columns { get; }
+
         /// <summary>
         /// 文字列表現を取得する
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"[{SchemaName}].[{TableName}]";
 
-        /// <summary>
-        /// テーブルファイルからテーブルインスタンスを生成する
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static Table Parse(string value)
-        {
-            var schemaName = value.Substring(1, value.IndexOf("]", StringComparison.Ordinal) - 1);
-
-            var tableName = value.Substring(schemaName.Length + 4);
-            tableName = tableName.Substring(0, tableName.IndexOf("]", StringComparison.Ordinal));
-            return new Table(schemaName, tableName);
-        }
-
-        internal IEnumerable<IRow> ReadAllRows(IDbConnection connection, IList<Column> columns)
+        internal IEnumerable<IRow> ReadAllRows(IDbConnection connection)
         {
             var primaryKeys =
-                columns
+                Columns
                     .Where(x => x.IsPrimaryKey)
                     .OrderBy(x => x.PrimaryKeyOrdinal)
                     .Select(x => x.ColumnName)
@@ -63,7 +52,7 @@ namespace DbAssertions
 
             var query = @$"
 select
-    {string.Join(", ", columns.Select(x => $"[{x.ColumnName}]"))}
+    {string.Join(", ", Columns.Select(x => $"[{x.ColumnName}]"))}
 from
     [{SchemaName}].[{TableName}]
 {(primaryKeys.Any() ? "order by" : string.Empty)}

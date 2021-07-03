@@ -10,13 +10,11 @@ namespace DbAssertions
     internal class TableWriter : ITableWriter
     {
         private readonly Table _table;
-        private readonly List<Column> _columns;
         private readonly CsvWriter _csvWriter;
 
-        public TableWriter(Table table, List<Column> columns, DirectoryInfo directoryInfo)
+        public TableWriter(Table table, DirectoryInfo directoryInfo)
         {
             _table = table;
-            _columns = columns;
             FileInfo = directoryInfo.GetFile($"{table}.csv");
 
             _csvWriter = new CsvWriter(new StreamWriter(FileInfo.Open(FileMode.Create)));
@@ -31,7 +29,7 @@ namespace DbAssertions
 
         public void Write(IRow row)
         {
-            foreach (var column in _columns)
+            foreach (var column in _table.Columns)
             {
                 var value = row[column];
                 if (value == DBNull.Value)

@@ -59,8 +59,10 @@ namespace DbAssertions.SqlServer
         protected override List<Table> GetTables()
         {
             using var connection = OpenConnection();
-            using var command = connection.CreateCommand();
 
+            var columns = GetTableColumns(connection);
+
+            using var command = connection.CreateCommand();
             command.CommandText = @$"
 use {DatabaseName};
 
@@ -80,10 +82,15 @@ order by
             List<Table> tables = new();
             while (reader.Read())
             {
+                var schemaName = (string) reader["SchemaName"];
+                var tableName = (string) reader["TableName"];
                 tables.Add(
                     new Table(
-                        (string) reader["SchemaName"],
-                        (string) reader["TableName"]
+                        schemaName,
+                        tableName,
+                        columns
+                            .Where(x => x.SchemaName == schemaName && x.TableName == tableName)
+                            .ToList()
                     ));
             }
 
@@ -93,11 +100,9 @@ order by
         /// <summary>
         /// テーブルの列を取得する。
         /// </summary>
-        /// <param name="table"></param>
         /// <returns></returns>
-        protected override List<Column> GetTableColumns(Table table)
+        private List<Column> GetTableColumns(IDbConnection connection)
         {
-            using var connection = OpenConnection(); 
             using var command = connection.CreateCommand();
 
             command.CommandText = @$"
@@ -129,22 +134,9 @@ from
 		and pk_constraints.unique_index_id  = index_columns.index_id
 		and index_columns.object_id = columns.object_id
 		and index_columns.column_id = columns.column_id
-where
-	schemas.name = @SchemaName
-	and tables.name = @TableName
 order by
 	columns.column_id
 ";
-            var schemaNameParameter = command.CreateParameter();
-            schemaNameParameter.ParameterName = "SchemaName";
-            schemaNameParameter.Value = table.SchemaName;
-            command.Parameters.Add(schemaNameParameter);
-
-            var tableNameParameter = command.CreateParameter();
-            tableNameParameter.ParameterName = "TableName";
-            tableNameParameter.Value = table.TableName;
-            command.Parameters.Add(tableNameParameter);
-
             using var reader = command.ExecuteReader();
 
             List<Column> columns = new();
@@ -153,17 +145,17 @@ order by
                 columns.Add(
                     new Column(
                         DatabaseName,
-                        (string) reader["SchemaName"],
-                        table.TableName,
-                        (string) reader["ColumnName"],
-                        (byte) reader["SystemTypeId"] switch
+                        (string)reader["SchemaName"],
+                        (string)reader["TableName"],
+                        (string)reader["ColumnName"],
+                        (byte)reader["SystemTypeId"] switch
                         {
-                            (byte) ColumnType.VarBinary => ColumnType.VarBinary,
-                            (byte) ColumnType.DateTime => ColumnType.DateTime,
+                            (byte)ColumnType.VarBinary => ColumnType.VarBinary,
+                            (byte)ColumnType.DateTime => ColumnType.DateTime,
                             _ => ColumnType.Other
                         },
                         Convert.ToBoolean(reader["IsPrimaryKey"]),
-                        (int) reader["PrimaryKeyOrdinal"]));
+                        (int)reader["PrimaryKeyOrdinal"]));
             }
 
             return columns;

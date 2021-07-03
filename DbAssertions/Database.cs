@@ -44,8 +44,7 @@ namespace DbAssertions
         /// <param name="directoryInfo"></param>
         public void FirstExport(DirectoryInfo directoryInfo)
         {
-            var exportDirectoryInfo = directoryInfo.GetDirectory("First");
-            exportDirectoryInfo.ReCreate();
+            var exportDirectoryInfo = directoryInfo.GetDirectory("First").ReCreate();
 
             var tables = GetTables();
 
@@ -68,6 +67,8 @@ namespace DbAssertions
                 throw new InvalidOperationException("初回エクスポートフォルダが存在しません");
             }
 
+            var tables = GetTables();
+
             // 2回目のエクスポートディレクトリを作成する
             var secondDirectoryInfo = directoryInfo.GetDirectory("Second");
             secondDirectoryInfo.ReCreate();
@@ -85,7 +86,9 @@ namespace DbAssertions
             Parallel.ForEach(tableFiles, firstTableFile =>
             {
                 // １回目のファイル名からテーブルオブジェクトを作成する
-                var table = Table.Parse(firstTableFile.Name);
+                var schemaName = firstTableFile.Name.GetSchemaName();
+                var tableName = firstTableFile.Name.GetTableName();
+                var table = tables.Single(x => x.SchemaName == schemaName && x.TableName == tableName);
 
                 // ２回目のエクスポートを実行する
                 var secondTableFile = Export(table, secondDirectoryInfo);
@@ -117,9 +120,6 @@ namespace DbAssertions
                     throw new DbAssertionsException($@"ファイル {firstTableFile.Name} の行数が一致しませんでした。");
                 }
 
-                // テーブル列を取得する
-                var columns = GetTableColumns(table);
-
                 // 行ごとに処理を実施する
                 for (var rowNumber = 0; rowNumber < firstRecords.Length; rowNumber++)
                 {
@@ -138,9 +138,9 @@ namespace DbAssertions
                     }
 
                     // 列ごとに処理する
-                    for (var columnNumber = 0; columnNumber < columns.Count; columnNumber++)
+                    for (var columnNumber = 0; columnNumber < table.Columns.Count; columnNumber++)
                     {
-                        var column = columns[columnNumber];
+                        var column = table.Columns[columnNumber];
                         var firstRecordCell = firstRecordCells[columnNumber];
                         var secondRecordCell = secondRecordCells[columnNumber];
                         var expectedRecordCell = column.ToExpected(firstRecordCell, secondRecordCell, rowNumber);
@@ -177,6 +177,8 @@ namespace DbAssertions
             string because = "",
             params object[] becauseArgs)
         {
+            var tables = GetTables();
+
             // 期待結果zipファイルを展開する
             using var compressStreamA = expectedFileInfo.OpenRead();
             using var zipFile = new ZipFile(compressStreamA);
@@ -191,7 +193,9 @@ namespace DbAssertions
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
             Parallel.ForEach(zipFile.GetZipEntries(), zipEntry =>
             {
-                var table = zipEntry.GetTable(DatabaseName);
+                var schemaName = zipEntry.GetSchemaName();
+                var tableName = zipEntry.GetTableName();
+                var table = tables.Single(x => x.SchemaName == schemaName && x.TableName == tableName);
                 var actualTableFile = Export(table, directoryInfo);
                 // ReSharper disable once AccessToDisposedClosure
                 using var zipStreamReader = new StreamReader(zipFile.GetInputStream(zipEntry), Encoding.UTF8);
@@ -222,9 +226,6 @@ namespace DbAssertions
                 }
 
 
-                // テーブルの列を取得する
-                var columns = GetTableColumns(table);
-
                 // 行ごとの処理を実行する
                 for (var rowNumber = 0; rowNumber < expectedRecords.Length; rowNumber++)
                 {
@@ -236,9 +237,9 @@ namespace DbAssertions
                     // TODO:列数チェック。現在BCPでCSVエクスポートするときにカンマが入っていると正しい列数にならないため一旦未実施とする
 
                     // 列ごとに処理する
-                    for (var columnNumber = 0; columnNumber < columns.Count; columnNumber++)
+                    for (var columnNumber = 0; columnNumber < table.Columns.Count; columnNumber++)
                     {
-                        var column = columns[columnNumber];
+                        var column = table.Columns[columnNumber];
                         var expectedRecordCell = expectedRecordCells[columnNumber];
                         var actualRecordCell = actualRecordCells[columnNumber];
                         if (!column.Compare(expectedRecordCell, actualRecordCell, lifeCycleColumnsArray, timeBeforeStart))
@@ -267,14 +268,13 @@ namespace DbAssertions
         /// <returns></returns>
         public FileInfo Export(Table table, DirectoryInfo directoryInfo)
         {
-            var columns = GetTableColumns(table);
             using var connection = OpenConnection();
 
-            using var tableWriter = new TableWriter(table, columns, directoryInfo);
+            using var tableWriter = new TableWriter(table, directoryInfo);
 
             try
             {
-                foreach (var row in table.ReadAllRows(connection, columns))
+                foreach (var row in table.ReadAllRows(connection))
                 {
                     tableWriter.Write(row);
                 }
@@ -293,12 +293,5 @@ namespace DbAssertions
         /// </summary>
         /// <returns></returns>
         protected abstract List<Table> GetTables();
-
-        /// <summary>
-        /// テーブルの列を取得する。
-        /// </summary>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        protected abstract List<Column> GetTableColumns(Table table);
     }
 }
