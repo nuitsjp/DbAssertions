@@ -79,14 +79,13 @@ namespace DbAssertions
             // この時、対象のDBのファイルだけを取得する
             var tableFiles = 
                 firstDirectoryInfo
-                    .GetFiles("*.csv")
-                    .Where(x => x.Name.StartsWith($"[{DatabaseName}]"));
+                    .GetFiles("*.csv");
 
             // 並列処理で全テーブル分の処理を実施する
             Parallel.ForEach(tableFiles, firstTableFile =>
             {
                 // １回目のファイル名からテーブルオブジェクトを作成する
-                var table = Table.Parse(firstTableFile.Name);
+                var table = Table.Parse(firstTableFile.Name, DatabaseName);
 
                 // ２回目のエクスポートを実行する
                 var secondTableFile = Export(table, secondDirectoryInfo);
@@ -190,9 +189,9 @@ namespace DbAssertions
 
             CompareResult compareResult = new();
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
-            Parallel.ForEach(zipFile.GetZipEntries().Where(x => x.Name.StartsWith($"[{DatabaseName}]")), zipEntry =>
+            Parallel.ForEach(zipFile.GetZipEntries(), zipEntry =>
             {
-                var table = zipEntry.GetTable();
+                var table = zipEntry.GetTable(DatabaseName);
                 var actualTableFile = Export(table, directoryInfo);
                 // ReSharper disable once AccessToDisposedClosure
                 using var zipStreamReader = new StreamReader(zipFile.GetInputStream(zipEntry), Encoding.UTF8);

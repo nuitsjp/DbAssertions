@@ -28,9 +28,11 @@ namespace DbAssertions
         /// ZipEntryに該当するテーブルを取得する
         /// </summary>
         /// <param name="zipEntry"></param>
+        /// <param name="databaseName"></param>
         /// <returns></returns>
-        internal static Table GetTable(this ZipEntry zipEntry) =>
+        internal static Table GetTable(this ZipEntry zipEntry, string databaseName) =>
             Table.Parse(
-                zipEntry.Name.Substring(zipEntry.Name.IndexOf("/", StringComparison.Ordinal) + 1));
+                zipEntry.Name.Substring(zipEntry.Name.IndexOf("/", StringComparison.Ordinal) + 1),
+                databaseName);
     }
 }
