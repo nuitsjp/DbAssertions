@@ -267,21 +267,19 @@ namespace DbAssertions
         /// <returns></returns>
         public FileInfo Export(Table table, DirectoryInfo directoryInfo)
         {
-            var fileInfo = directoryInfo.GetFile($"{table}.csv");
-
             var columns = GetTableColumns(table);
             using var connection = OpenConnection();
 
-            using var tableRepository = new TableWriter(table, columns, directoryInfo);
+            using var tableWriter = new TableWriter(table, columns, directoryInfo);
 
             try
             {
                 foreach (var row in table.ReadAllRows(connection, columns))
                 {
-                    tableRepository.Write(row);
+                    tableWriter.Write(row);
                 }
 
-                return fileInfo;
+                return tableWriter.FileInfo;
             }
             catch (Exception e)
             {

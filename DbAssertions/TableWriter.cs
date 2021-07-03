@@ -13,22 +13,21 @@ namespace DbAssertions
         private readonly List<Column> _columns;
         private readonly CsvWriter _csvWriter;
 
-
         public TableWriter(Table table, List<Column> columns, DirectoryInfo directoryInfo)
         {
             _table = table;
             _columns = columns;
-            var fileInfo = directoryInfo.GetFile($"{table}.csv");
+            FileInfo = directoryInfo.GetFile($"{table}.csv");
 
-            _csvWriter = new CsvWriter(new StreamWriter(fileInfo.Open(FileMode.Create)));
+            _csvWriter = new CsvWriter(new StreamWriter(FileInfo.Open(FileMode.Create)));
         }
-
-
 
         public void Dispose()
         {
             _csvWriter.Dispose();
         }
+
+        public FileInfo FileInfo { get; }
 
         public void Write(IRow row)
         {
