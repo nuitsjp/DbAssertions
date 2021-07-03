@@ -272,31 +272,13 @@ namespace DbAssertions
             var columns = GetTableColumns(table);
             using var connection = OpenConnection();
 
-            using var expectedCsv = new CsvWriter(new StreamWriter(fileInfo.Open(FileMode.Create)));
+            using var tableRepository = new TableWriter(table, columns, directoryInfo);
 
             try
             {
                 foreach (var row in table.ReadAllRows(connection, columns))
                 {
-                    foreach (var column in columns)
-                    {
-                        var value = row[column];
-                        if (value == DBNull.Value)
-                        {
-                            expectedCsv.WriteField(null);
-                        }
-                        else if (column.ColumnType == ColumnType.VarBinary)
-                        {
-                            using var sha256 = SHA256.Create();
-                            var hash = sha256.ComputeHash((byte[])value);
-                            expectedCsv.WriteField(string.Concat(hash.Select(b => $"{b:x2}")));
-                        }
-                        else
-                        {
-                            expectedCsv.WriteField(value);
-                        }
-                    }
-                    expectedCsv.NextRecord();
+                    tableRepository.Write(row);
                 }
 
                 return fileInfo;
