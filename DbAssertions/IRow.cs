@@ -1,6 +1,6 @@
 ﻿namespace DbAssertions
 {
-    public interface IRecord
+    public interface IRow
     {
         object this[Column column] { get; }
     }

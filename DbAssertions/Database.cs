@@ -270,36 +270,17 @@ namespace DbAssertions
             var fileInfo = directoryInfo.GetFile($"{table}.csv");
 
             var columns = GetTableColumns(table);
-            var primaryKeys =
-                columns
-                    .Where(x => x.IsPrimaryKey)
-                    .OrderBy(x => x.PrimaryKeyOrdinal)
-                    .Select(x => x.ColumnName)
-                    .ToArray();
-
-            var query = @$"
-select
-    {string.Join(", ", columns.Select(x => $"[{x.ColumnName}]"))}
-from
-    {table}
-{(primaryKeys.Any() ? "order by" : string.Empty)}
-    {string.Join(", ", primaryKeys)}";
-
             using var connection = OpenConnection();
 
             using var expectedCsv = new CsvWriter(new StreamWriter(fileInfo.Open(FileMode.Create)));
 
-            using var command = connection.CreateCommand();
-            command.CommandText = query;
-
             try
             {
-                using var reader = command.ExecuteReader();
-                while (reader.Read())
+                foreach (var row in table.ReadAllRows(connection, columns))
                 {
                     foreach (var column in columns)
                     {
-                        var value = reader[column.ColumnName];
+                        var value = row[column];
                         if (value == DBNull.Value)
                         {
                             expectedCsv.WriteField(null);
