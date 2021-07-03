@@ -82,7 +82,6 @@ order by
             {
                 tables.Add(
                     new Table(
-                        (string) reader["DatabaseName"],
                         (string) reader["SchemaName"],
                         (string) reader["TableName"]
                     ));

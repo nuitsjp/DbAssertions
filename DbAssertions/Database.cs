@@ -85,7 +85,7 @@ namespace DbAssertions
             Parallel.ForEach(tableFiles, firstTableFile =>
             {
                 // １回目のファイル名からテーブルオブジェクトを作成する
-                var table = Table.Parse(firstTableFile.Name, DatabaseName);
+                var table = Table.Parse(firstTableFile.Name);
 
                 // ２回目のエクスポートを実行する
                 var secondTableFile = Export(table, secondDirectoryInfo);

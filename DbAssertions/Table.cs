@@ -13,18 +13,12 @@ namespace DbAssertions
         /// <param name="databaseName"></param>
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
-        public Table(string databaseName, string schemaName, string tableName)
+        public Table(string schemaName, string tableName)
         {
-            DatabaseName = databaseName;
             SchemaName = schemaName;
             TableName = tableName;
         }
 
-        /// <summary>
-        /// データベース名を取得する
-        /// </summary>
-        public string DatabaseName { get; }
-        
         /// <summary>
         /// スキーマ名を取得する
         /// </summary>
@@ -45,15 +39,14 @@ namespace DbAssertions
         /// テーブルファイルからテーブルインスタンスを生成する
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="databaseName"></param>
         /// <returns></returns>
-        public static Table Parse(string value, string databaseName)
+        public static Table Parse(string value)
         {
             var schemaName = value.Substring(1, value.IndexOf("]", StringComparison.Ordinal) - 1);
 
             var tableName = value.Substring(schemaName.Length + 4);
             tableName = tableName.Substring(0, tableName.IndexOf("]", StringComparison.Ordinal));
-            return new Table(databaseName, schemaName, tableName);
+            return new Table(schemaName, tableName);
         }
     }
 }

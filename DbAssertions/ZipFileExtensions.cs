@@ -32,7 +32,6 @@ namespace DbAssertions
         /// <returns></returns>
         internal static Table GetTable(this ZipEntry zipEntry, string databaseName) =>
             Table.Parse(
-                zipEntry.Name.Substring(zipEntry.Name.IndexOf("/", StringComparison.Ordinal) + 1),
-                databaseName);
+                zipEntry.Name.Substring(zipEntry.Name.IndexOf("/", StringComparison.Ordinal) + 1));
     }
 }
