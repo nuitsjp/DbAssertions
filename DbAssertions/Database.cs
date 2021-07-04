@@ -98,7 +98,6 @@ namespace DbAssertions
 
                 // 1回目と2回目の全CSV行を読み込む
                 var tableReader = new TableReader(table.Columns);
-
                 var firstRecords = tableReader.ReadAllRows(firstTableFile);
                 var secondRecords = tableReader.ReadAllRows(secondTableFile);
 
@@ -115,14 +114,6 @@ namespace DbAssertions
                     // 全列をオブジェクト化する
                     var firstRecord = firstRecords[rowNumber];
                     var secondRecord = secondRecords[rowNumber];
-
-                    //if (firstRecordCells.Length != secondRecordCells.Length)
-                    //{
-                    //    // 列数が異なる場合、テーブル構造が変化しており実施手順に何らかの問題がある
-                    //    // CsvHelperの仕様で1行目の列数が全行取得されるため、必ず1行目でエラーが発生する
-                    //    // 2行目以降の列数エラーは、ここ以降の判定でセルの値の不一致として判断される
-                    //    throw new DbAssertionsException($@"ファイル {firstTableFile.Name} の列数が一致しませんでした。");
-                    //}
 
                     // 列ごとに処理する
                     foreach (var column in table.Columns)
@@ -183,26 +174,11 @@ namespace DbAssertions
                 var tableName = zipEntry.GetTableName();
                 var table = tables.Single(x => x.SchemaName == schemaName && x.TableName == tableName);
                 var actualTableFile = Export(table, directoryInfo);
-                // ReSharper disable once AccessToDisposedClosure
-                using var zipStreamReader = new StreamReader(zipFile.GetInputStream(zipEntry), Encoding.UTF8);
                 
-                // zipとエクスポートしたテキストからテキスト全文を取得する
-                var expectedTableText = zipStreamReader.ReadToEnd();
-                var actualTableText = File.ReadAllText(actualTableFile.FullName);
-                if (expectedTableText.Equals(actualTableText))
-                {
-                    // 一致
-                    return;
-                }
-
-                // テキストが不一致の場合、実行ごとに変化のあるセルに対応しつつ期待結果ファイルを作成する
-                // 期待値と実際値のそれぞれのCsvReaderを作成する
-                using var expectedCsv = new CsvReader(new StringReader(expectedTableText)) { Configuration = { HasHeaderRecord = false } };
-                using var actualCsv = new CsvReader(new StringReader(actualTableText)) { Configuration = { HasHeaderRecord = false } };
-
-                // CSVからすべての行を一括で読み取る
-                var expectedRecords = expectedCsv.GetRecords<dynamic>().ToArray();
-                var actualRecords = actualCsv.GetRecords<dynamic>().ToArray();
+                var tableReader = new TableReader(table.Columns);
+                // ReSharper disable once AccessToDisposedClosure
+                var expectedRecords = tableReader.ReadAllRows(new StreamReader(zipFile.GetInputStream(zipEntry), Encoding.UTF8));
+                var actualRecords = tableReader.ReadAllRows(actualTableFile);
                 if (expectedRecords.Length != actualRecords.Length)
                 {
                     // 実行ごとに行数が変わるようなケースは対応しない。
@@ -216,18 +192,14 @@ namespace DbAssertions
                 for (var rowNumber = 0; rowNumber < expectedRecords.Length; rowNumber++)
                 {
                     // 全列をオブジェクト化する
-                    var expectedRecordRecord = (IDictionary<string, object>)expectedRecords[rowNumber];
-                    var expectedRecordCells = expectedRecordRecord.Values.Cast<string>().ToArray();
-                    var actualRecord = (IDictionary<string, object>)actualRecords[rowNumber];
-                    var actualRecordCells = actualRecord.Values.Cast<string>().ToArray();
-                    // TODO:列数チェック。現在BCPでCSVエクスポートするときにカンマが入っていると正しい列数にならないため一旦未実施とする
+                    var expectedRecordRecord = expectedRecords[rowNumber];
+                    var actualRecord = actualRecords[rowNumber];
 
                     // 列ごとに処理する
-                    for (var columnNumber = 0; columnNumber < table.Columns.Count; columnNumber++)
+                    foreach (var column in table.Columns)
                     {
-                        var column = table.Columns[columnNumber];
-                        var expectedRecordCell = expectedRecordCells[columnNumber];
-                        var actualRecordCell = actualRecordCells[columnNumber];
+                        var expectedRecordCell = (string)expectedRecordRecord[column];
+                        var actualRecordCell = (string)actualRecord[column];
                         if (!column.Compare(expectedRecordCell, actualRecordCell, lifeCycleColumnsArray, timeBeforeStart))
                         {
                             if (expectedRecordCell == Column.TimeAfterStart)

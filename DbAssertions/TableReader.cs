@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using CsvHelper;
 
 namespace DbAssertions
@@ -14,9 +15,12 @@ namespace DbAssertions
             _columns = columns;
         }
 
-        public IRow[] ReadAllRows(FileInfo fileInfo)
+        public IRow[] ReadAllRows(FileInfo fileInfo) => ReadAllRows(new StreamReader(fileInfo.OpenRead(), Encoding.UTF8));
+
+
+        public IRow[] ReadAllRows(StreamReader streamReader)
         {
-            using var firstCsv = new CsvReader(new StreamReader(fileInfo.OpenRead())) { Configuration = { HasHeaderRecord = false } };
+            using var firstCsv = new CsvReader(streamReader) { Configuration = { HasHeaderRecord = false } };
 
             return firstCsv
                 .GetRecords<dynamic>()
