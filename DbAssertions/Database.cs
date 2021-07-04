@@ -93,25 +93,14 @@ namespace DbAssertions
                 // ２回目のエクスポートを実行する
                 var secondTableFile = Export(table, secondDirectoryInfo);
 
-                // ファイルを読み込みテキストを比較する
-                var firstTableText = File.ReadAllText(firstTableFile.FullName);
-                var secondTableText = File.ReadAllText(secondTableFile.FullName);
-                if (firstTableText.Equals(secondTableText))
-                {
-                    // 完全一致した場合は、１回目のファイルを期待結果ファイルとしてコピーする
-                    firstTableFile.CopyTo(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName);
-                    return;
-                }
-
                 // テキストが不一致の場合、実行ごとに変化のあるセルに対応しつつ期待結果ファイルを作成する
-                // 1回目と2回目のそれぞれのCsvReaderと期待結果のCsvWriterを作成する
-                using var firstCsv = new CsvReader(new StringReader(firstTableText)) { Configuration = { HasHeaderRecord = false } };
-                using var secondCsv = new CsvReader(new StringReader(secondTableText)) { Configuration = { HasHeaderRecord = false } };
                 using var expectedCsv = new CsvWriter(new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)));
 
                 // 1回目と2回目の全CSV行を読み込む
-                var firstRecords = firstCsv.GetRecords<dynamic>().ToArray();
-                var secondRecords = secondCsv.GetRecords<dynamic>().ToArray();
+                var tableReader = new TableReader(table.Columns);
+
+                var firstRecords = tableReader.ReadAllRows(firstTableFile);
+                var secondRecords = tableReader.ReadAllRows(secondTableFile);
 
                 if (firstRecords.Length != secondRecords.Length)
                 {
@@ -124,25 +113,22 @@ namespace DbAssertions
                 for (var rowNumber = 0; rowNumber < firstRecords.Length; rowNumber++)
                 {
                     // 全列をオブジェクト化する
-                    var firstRecord = (IDictionary<string, object>)firstRecords[rowNumber];
-                    var firstRecordCells = firstRecord.Values.Cast<string>().ToArray();
-                    var secondRecord = (IDictionary<string, object>)secondRecords[rowNumber];
-                    var secondRecordCells = secondRecord.Values.Cast<string>().ToArray();
+                    var firstRecord = firstRecords[rowNumber];
+                    var secondRecord = secondRecords[rowNumber];
 
-                    if (firstRecordCells.Length != secondRecordCells.Length)
-                    {
-                        // 列数が異なる場合、テーブル構造が変化しており実施手順に何らかの問題がある
-                        // CsvHelperの仕様で1行目の列数が全行取得されるため、必ず1行目でエラーが発生する
-                        // 2行目以降の列数エラーは、ここ以降の判定でセルの値の不一致として判断される
-                        throw new DbAssertionsException($@"ファイル {firstTableFile.Name} の列数が一致しませんでした。");
-                    }
+                    //if (firstRecordCells.Length != secondRecordCells.Length)
+                    //{
+                    //    // 列数が異なる場合、テーブル構造が変化しており実施手順に何らかの問題がある
+                    //    // CsvHelperの仕様で1行目の列数が全行取得されるため、必ず1行目でエラーが発生する
+                    //    // 2行目以降の列数エラーは、ここ以降の判定でセルの値の不一致として判断される
+                    //    throw new DbAssertionsException($@"ファイル {firstTableFile.Name} の列数が一致しませんでした。");
+                    //}
 
                     // 列ごとに処理する
-                    for (var columnNumber = 0; columnNumber < table.Columns.Count; columnNumber++)
+                    foreach (var column in table.Columns)
                     {
-                        var column = table.Columns[columnNumber];
-                        var firstRecordCell = firstRecordCells[columnNumber];
-                        var secondRecordCell = secondRecordCells[columnNumber];
+                        var firstRecordCell = (string)firstRecord[column];
+                        var secondRecordCell = (string)secondRecord[column];
                         var expectedRecordCell = column.ToExpected(firstRecordCell, secondRecordCell, rowNumber);
                         expectedCsv.WriteField(expectedRecordCell);
                     }

@@ -35,6 +35,18 @@ namespace DbAssertions
 
         public IList<Column> Columns { get; }
 
+        private string[] PrimaryKeys
+        {
+            get
+            {
+                return Columns
+                    .Where(x => x.IsPrimaryKey)
+                    .OrderBy(x => x.PrimaryKeyOrdinal)
+                    .Select(x => x.ColumnName)
+                    .ToArray();
+            }
+        }
+
         /// <summary>
         /// 文字列表現を取得する
         /// </summary>
@@ -43,12 +55,7 @@ namespace DbAssertions
 
         internal IEnumerable<IRow> ReadAllRows(IDbConnection connection)
         {
-            var primaryKeys =
-                Columns
-                    .Where(x => x.IsPrimaryKey)
-                    .OrderBy(x => x.PrimaryKeyOrdinal)
-                    .Select(x => x.ColumnName)
-                    .ToArray();
+            var primaryKeys = PrimaryKeys;
 
             var query = @$"
 select
@@ -63,7 +70,7 @@ from
 
             using var reader = command.ExecuteReader();
 
-            var row = new Row(reader);
+            var row = new DatabaseRow(reader);
 
             while (reader.Read())
             {
@@ -71,11 +78,11 @@ from
             }
         }
 
-        private class Row : IRow
+        private class DatabaseRow : IRow
         {
             private readonly IDataReader _dataReader;
 
-            public Row(IDataReader dataReader)
+            public DatabaseRow(IDataReader dataReader)
             {
                 _dataReader = dataReader;
             }
