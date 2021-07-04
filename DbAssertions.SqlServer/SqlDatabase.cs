@@ -37,7 +37,7 @@ namespace DbAssertions.SqlServer
         /// <summary>
         /// 接続文字列を取得する
         /// </summary>
-        public override string ConnectionString => new SqlConnectionStringBuilder
+        private string ConnectionString => new SqlConnectionStringBuilder
         {
             DataSource = Server,
             UserID = UserId,

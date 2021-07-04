@@ -31,11 +31,6 @@ namespace DbAssertions
             DatabaseName = databaseName;
         }
 
-        /// <summary>
-        /// 接続文字列を取得する
-        /// </summary>
-        public abstract string ConnectionString { get; }
-
         public abstract IDbConnection OpenConnection();
 
         /// <summary>
