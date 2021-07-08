@@ -1,11 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using ConsoleAppFramework;
-using DbAssertions.SqlServer;
 using Microsoft.Extensions.Hosting;
 
-namespace DbAssertions.App
+namespace DbAssertions.SqlServer.App
 {
     class Program : ConsoleAppBase
     {
