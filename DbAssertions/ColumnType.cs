@@ -18,6 +18,11 @@
         /// <summary>
         /// 日時
         /// </summary>
-        DateTime = 61
+        DateTime = 61,
+
+        /// <summary>
+        /// datetime2
+        /// </summary>
+        DateTime2 = 42
     }
 }
