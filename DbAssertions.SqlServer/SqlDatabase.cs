@@ -152,6 +152,7 @@ order by
                         {
                             (byte)ColumnType.VarBinary => ColumnType.VarBinary,
                             (byte)ColumnType.DateTime => ColumnType.DateTime,
+                            (byte)ColumnType.DateTime2 => ColumnType.DateTime2,
                             _ => ColumnType.Other
                         },
                         Convert.ToBoolean(reader["IsPrimaryKey"]),

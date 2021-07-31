@@ -86,7 +86,8 @@ namespace DbAssertions
             }
 
             // 値が異なり、日付カラムの場合
-            if (_columnType == ColumnType.DateTime)
+            if (_columnType == ColumnType.DateTime
+                || _columnType == ColumnType.DateTime2)
             {
                 if(firstCell.Any() && secondCell.Any())
                 {
