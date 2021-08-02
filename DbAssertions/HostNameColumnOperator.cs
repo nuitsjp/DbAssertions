@@ -3,7 +3,7 @@ using System.Net;
 
 namespace DbAssertions
 {
-    public class HostNameColumnType : ISpecificColumnType
+    public class HostNameColumnOperator : IColumnOperator
     {
         private static readonly string HostNameLabel = "HostName";
 

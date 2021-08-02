@@ -14,30 +14,7 @@ namespace DbAssertions
         /// </summary>
         internal const string TimeAfterStart = "TimeAfterStart";
 
-        /// <summary>
-        /// データベース名
-        /// </summary>
-        private readonly string _databaseName;
-
-        /// <summary>
-        /// スキーマ名
-        /// </summary>
-        private readonly string _schemaName;
-
-        /// <summary>
-        /// テーブル名
-        /// </summary>
-        private readonly string _tableName;
-
-        /// <summary>
-        /// カラム名
-        /// </summary>
-        private readonly string _columnName;
-
-        /// <summary>
-        /// カラム型
-        /// </summary>
-        private readonly ColumnType _columnType;
+        private readonly IColumnOperator _columnOperator;
 
         /// <summary>
         /// インスタンスを生成する。
@@ -49,23 +26,52 @@ namespace DbAssertions
         /// <param name="columnType"></param>
         /// <param name="isPrimaryKey"></param>
         /// <param name="primaryKeyOrdinal"></param>
-        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType, bool isPrimaryKey, int primaryKeyOrdinal)
+        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType, bool isPrimaryKey, int primaryKeyOrdinal, IColumnOperator columnOperator)
         {
-            _tableName = tableName;
-            _columnName = columnName;
-            _columnType = columnType;
+            TableName = tableName;
+            ColumnName = columnName;
+            ColumnType = columnType;
             IsPrimaryKey = isPrimaryKey;
             PrimaryKeyOrdinal = primaryKeyOrdinal;
-            _databaseName = databaseName;
-            _schemaName = schemaName;
+            _columnOperator = columnOperator;
+            DatabaseName = databaseName;
+            SchemaName = schemaName;
+            //if (ColumnType == ColumnType.DateTime
+            //    || ColumnType == ColumnType.DateTime2)
+            //{
+            //    _columnOperator = new RunTimeColumnOperator();
+            //}
+            //else
+            //{
+            //    _columnOperator = new DefaultColumnOperator();
+            //}
+
         }
 
-        public string DatabaseName => _databaseName;
-        public string SchemaName => _schemaName;
-        public string TableName => _tableName;
-        public string ColumnName => _columnName;
+        /// <summary>
+        /// データベース名
+        /// </summary>
+        public string DatabaseName { get; }
 
-        public ColumnType ColumnType => _columnType;
+        /// <summary>
+        /// スキーマ名
+        /// </summary>
+        public string SchemaName { get; }
+
+        /// <summary>
+        /// テーブル名
+        /// </summary>
+        public string TableName { get; }
+
+        /// <summary>
+        /// カラム名
+        /// </summary>
+        public string ColumnName { get; }
+
+        /// <summary>
+        /// カラム型
+        /// </summary>
+        public ColumnType ColumnType { get; }
 
         public bool IsPrimaryKey { get; }
 
@@ -78,7 +84,29 @@ namespace DbAssertions
         /// <param name="secondCell"></param>
         /// <param name="rowNumber"></param>
         /// <returns></returns>
-        internal string ToExpected(string firstCell, string secondCell, int rowNumber)
+        internal string ToExpected(string firstCell, string secondCell, int rowNumber) => 
+            _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
+
+        /// <summary>
+        /// 値を比較する
+        /// </summary>
+        /// <param name="expectedCell"></param>
+        /// <param name="actualCell"></param>
+        /// <param name="specificColumns"></param>
+        /// <param name="timeBeforeStart"></param>
+        /// <returns></returns>
+        internal bool Compare(string expectedCell, string actualCell, IEnumerable<SpecificColumn> specificColumns, DateTime timeBeforeStart)
+            => _columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
+    }
+
+    public class DefaultColumnOperator : IColumnOperator
+    {
+        /// <summary>
+        /// 実行ごとに値が変わるセルを表す文字列
+        /// </summary>
+        internal const string TimeAfterStart = "TimeAfterStart";
+
+        public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {
             if (Equals(firstCell, secondCell))
             {
@@ -87,10 +115,10 @@ namespace DbAssertions
             }
 
             // 値が異なり、日付カラムの場合
-            if (_columnType == ColumnType.DateTime
-                || _columnType == ColumnType.DateTime2)
+            if (column.ColumnType == ColumnType.DateTime
+                || column.ColumnType == ColumnType.DateTime2)
             {
-                if(firstCell.Any() && secondCell.Any())
+                if (firstCell.Any() && secondCell.Any())
                 {
                     // いずれの値も空ではなかった場合、日付に変換する
                     var firstDateTime = DateTime.Parse(firstCell);
@@ -103,41 +131,23 @@ namespace DbAssertions
                     }
 
                     // 1つ目の日付が新しい場合、想定していない値の為、エラーとする
-                    throw new DbAssertionsException($"[{_databaseName}].[{_schemaName}].[{_tableName}] テーブル {rowNumber} 行目の [{_columnName}] 列の1回目 [{firstDateTime}] が2回目 [{secondDateTime}] 以降の日付になっています。");
+                    throw DbAssertionsException.FromFirstCellIsNewerThanSecondCell(column, rowNumber, firstCell, secondCell);
                 }
 
                 // いずれかの値が空の場合、現時点で想定していない値の為、エラーとする。
-                throw new DbAssertionsException($"[{_databaseName}].[{_schemaName}].[{_tableName}] テーブル {rowNumber} 行目の [{_columnName}] 列の{(firstCell.Any() ? 2 : 1)}回目の値が空です。");
+                throw DbAssertionsException.FromOneOfThemIsEmpty(column, rowNumber, firstCell, secondCell);
             }
 
             // 日付カラムではないのでエラー
-            throw DbAssertionsException.FromUnableToExpected(this, rowNumber, firstCell, secondCell);
+            throw DbAssertionsException.FromUnableToExpected(column, rowNumber, firstCell, secondCell);
         }
 
-        /// <summary>
-        /// 値を比較する
-        /// </summary>
-        /// <param name="expectedCell"></param>
-        /// <param name="actualCell"></param>
-        /// <param name="specificColumns"></param>
-        /// <param name="timeBeforeStart"></param>
-        /// <returns></returns>
-        internal bool Compare(string expectedCell, string actualCell, IEnumerable<SpecificColumn> specificColumns, DateTime timeBeforeStart)
+        public bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
         {
             if (Equals(expectedCell, actualCell))
             {
                 // 値が一致
                 return true;
-            }
-
-            var matchedSpecificColumns =
-                specificColumns
-                    .Where(x => x.Match(_databaseName, _schemaName, _tableName, _columnName))
-                    .ToArray();
-            if (matchedSpecificColumns.IsNullOrEmpty())
-            {
-                // ファイルサイクルカラムではない場合、値が違えば不一致
-                return false;
             }
 
             if (expectedCell.IsNullOrEmpty() || actualCell.IsNullOrEmpty())
@@ -147,15 +157,65 @@ namespace DbAssertions
                 return false;
             }
 
-            if (matchedSpecificColumns.Any(x => x.LifeCycle == LifeCycle.Daily))
+            if (Equals(expectedCell, TimeAfterStart))
             {
-                // 実行時ではなく、日次で更新される値は日付書式なら一致とする
-                // これを増やしすぎるとテストにならないので要注意
-                if (DateTime.TryParse(actualCell, out _))
+                // 期待値がTimeAfterStartならテスト開始前の時刻より、actualが新しければ一致
+                return timeBeforeStart <= DateTime.Parse(actualCell);
+            }
+
+            // それ以外は不一致
+            return false;
+        }
+
+    }
+
+    public class RunTimeColumnOperator : IColumnOperator
+    {
+        /// <summary>
+        /// 実行ごとに値が変わるセルを表す文字列
+        /// </summary>
+        internal const string TimeAfterStart = "TimeAfterStart";
+
+        public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
+        {
+            if (Equals(firstCell, secondCell))
+            {
+                // 値が等しければ、その値を採用する
+                return firstCell;
+            }
+
+            if (firstCell.Any() && secondCell.Any())
+            {
+                // いずれの値も空ではなかった場合、日付に変換する
+                var firstDateTime = DateTime.Parse(firstCell);
+                var secondDateTime = DateTime.Parse(secondCell);
+                if (firstDateTime <= secondDateTime)
                 {
-                    return true;
+                    // 2回目の値が新しければ、それは実行の都度更新される値と判断し、実行後の時刻になる値として
+                    // そのラベルを採用する
+                    return TimeAfterStart;
                 }
 
+                // 1つ目の日付が新しい場合、想定していない値の為、エラーとする
+                throw DbAssertionsException.FromFirstCellIsNewerThanSecondCell(column, rowNumber, firstCell, secondCell);
+            }
+
+            // いずれかの値が空の場合、現時点で想定していない値の為、エラーとする。
+            throw DbAssertionsException.FromOneOfThemIsEmpty(column, rowNumber, firstCell, secondCell);
+        }
+
+        public bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
+        {
+            if (Equals(expectedCell, actualCell))
+            {
+                // 値が一致
+                return true;
+            }
+
+            if (expectedCell.IsNullOrEmpty() || actualCell.IsNullOrEmpty())
+            {
+                // いずれかだけが空の場合、不一致
+                // 両方空の場合は、最初の評価でtrueが返されている
                 return false;
             }
 

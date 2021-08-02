@@ -142,21 +142,27 @@ order by
             List<Column> columns = new();
             while (reader.Read())
             {
+                var columnType = (byte) reader["SystemTypeId"] switch
+                {
+                    (byte) ColumnType.VarBinary => ColumnType.VarBinary,
+                    (byte) ColumnType.DateTime => ColumnType.DateTime,
+                    (byte) ColumnType.DateTime2 => ColumnType.DateTime2,
+                    _ => ColumnType.Other
+                };
+                IColumnOperator columnOperator =
+                    (columnType == ColumnType.DateTime || columnType == ColumnType.DateTime2)
+                        ? new RunTimeColumnOperator()
+                        : new DefaultColumnOperator();
                 columns.Add(
                     new Column(
                         DatabaseName,
                         (string)reader["SchemaName"],
                         (string)reader["TableName"],
                         (string)reader["ColumnName"],
-                        (byte)reader["SystemTypeId"] switch
-                        {
-                            (byte)ColumnType.VarBinary => ColumnType.VarBinary,
-                            (byte)ColumnType.DateTime => ColumnType.DateTime,
-                            (byte)ColumnType.DateTime2 => ColumnType.DateTime2,
-                            _ => ColumnType.Other
-                        },
+                        columnType,
                         Convert.ToBoolean(reader["IsPrimaryKey"]),
-                        (int)reader["PrimaryKeyOrdinal"]));
+                        (int)reader["PrimaryKeyOrdinal"],
+                        columnOperator));
             }
 
             return columns;

@@ -11,7 +11,7 @@ namespace DbAssertions.Test
 {
     public class HostNameColumnTypeTest
     {
-        HostNameColumnType Subject { get; } = new();
+        HostNameColumnOperator Subject { get; } = new();
 
         public class Compare : HostNameColumnTypeTest
         {
@@ -49,7 +49,7 @@ namespace DbAssertions.Test
         public class ToExpected : HostNameColumnTypeTest
         {
             private readonly Column _column =
-                new ("database", "schema", "table", "column", ColumnType.Other, false, 0);
+                new ("database", "schema", "table", "column", ColumnType.Other, false, 0, new DefaultColumnOperator());
 
             [Fact]
             public void When_value_is_equal_and_not_matches_host_name_Should_return_value()

@@ -2,7 +2,7 @@
 
 namespace DbAssertions
 {
-    public interface ISpecificColumnType
+    public interface IColumnOperator
     {
         string ToExpected(Column column, int rowNumber, string firstCell, string secondCell);
 

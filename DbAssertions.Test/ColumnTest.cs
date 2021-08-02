@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using FluentAssertions;
+using Moq;
 using Xunit;
 
 namespace DbAssertions.Test
@@ -11,175 +13,58 @@ namespace DbAssertions.Test
         public class ToExpected
         {
             [Fact]
-            public void When_equal_Should_return_value()
+            public void Should_return_column_operator_result()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
-                var value = "value";
-                column.ToExpected(value, value, 1)
-                    .Should().Be(value);
-            }
+                var columnOperator = new Mock<IColumnOperator>();
+                var column = 
+                    new Column(
+                        "database", 
+                        "schema", 
+                        "table", 
+                        "column", 
+                        ColumnType.Other, 
+                        true, 
+                        1, 
+                        columnOperator.Object);
+                int rowNumber = 1;
+                var firstCell = "foo";
+                var secondCell = "bar";
+                var result = "result";
+                columnOperator
+                    .Setup(x => x.ToExpected(column, rowNumber, firstCell, secondCell))
+                    .Returns(result);
 
-            [Fact]
-            public void When_not_equal_and_Other_Should_throw_exception()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
-                var value = "value";
-                column.Invoking(x => x.ToExpected(value, "not value", 1))
-                    .ShouldThrow<DbAssertionsException>();
-            }
-
-
-            [Fact]
-            public void When_not_equal_and_VarBinary_Should_throw_exception()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.VarBinary, true, 1);
-                var value = "value";
-                column.Invoking(x => x.ToExpected(value, "not value", 1))
-                    .ShouldThrow<DbAssertionsException>();
-            }
-
-            [Fact]
-            public void When_first_is_empty_and_DateTime_Should_throw_exception()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
-                    .ShouldThrow<DbAssertionsException>();
-            }
-
-            [Fact]
-            public void When_second_is_empty_and_DateTime_Should_throw_exception()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                column.Invoking(x => x.ToExpected(string.Empty, "not empty", 1))
-                    .ShouldThrow<DbAssertionsException>();
-            }
-
-            [Fact]
-            public void When_first_is_before_second_Should_return_TimeAfterStart()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                column.ToExpected("2000/01/01", "2000/01/02", 1)
-                    .Should().Be(Column.TimeAfterStart);
-
-            }
-
-            [Fact]
-            public void When_first_is_after_second_Should_throw_exception()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                column.Invoking(x => x.ToExpected("2000/01/02", "2000/01/01", 1))
-                    .ShouldThrow<DbAssertionsException>();
-
+                column.ToExpected(firstCell, secondCell, rowNumber)
+                    .Should().Be(result);
             }
         }
 
         public class Compare
         {
             [Fact]
-            public void When_equal_Should_be_true()
+            public void Should_return_column_operator_result()
             {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
-                var value = "value";
-                column.Compare(value, value, Enumerable.Empty<SpecificColumn>(), DateTime.MaxValue)
-                    .Should().BeTrue();
-            }
+                var columnOperator = new Mock<IColumnOperator>();
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.Other,
+                        true,
+                        1,
+                        columnOperator.Object);
+                var expectedCell = "foo";
+                var actualCell = "bar";
+                var result = true;
+                var timeBeforeStart = DateTime.Now;
+                columnOperator
+                    .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))
+                    .Returns(result);
 
-            [Fact]
-            public void When_not_equal_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
-                column.Compare("value1", "value2", Enumerable.Empty<SpecificColumn>(), DateTime.MaxValue)
-                    .Should().BeFalse();
-            }
-
-            [Fact]
-            public void When_SpecificColumn_and_expected_is_empty_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Daily)};
-
-                column.Compare(string.Empty, "value", SpecificColumns, DateTime.MaxValue)
-                    .Should().BeFalse();
-            }
-
-            [Fact]
-            public void When_SpecificColumn_and_actual_is_empty_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Daily)};
-
-                column.Compare("value", string.Empty, SpecificColumns, DateTime.MaxValue)
-                    .Should().BeFalse();
-            }
-
-            [Fact]
-            public void When_LifeCycle_is_Daily_and_DateTime_format_Should_be_true()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Daily)};
-
-                column.Compare("value", "2000/01/01", SpecificColumns, DateTime.MaxValue)
-                    .Should().BeTrue();
-            }
-
-            [Fact]
-            public void When_LifeCycle_is_Daily_and_not_DateTime_format_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Daily)};
-
-                column.Compare("foo", "bar", SpecificColumns, DateTime.MaxValue)
-                    .Should().BeFalse();
-            }
-
-            [Fact]
-            public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_after_timeBeforeStart_Should_be_true()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns = 
-                    {new("database", "schema", "table", "column", LifeCycle.Runtime)};
-
-                var actual = DateTime.Now;
-                var timeBeforeStart = actual.AddMinutes(-1);
-
-                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
-                    .Should().BeTrue();
-
-            }
-
-
-            [Fact]
-            public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_before_timeBeforeStart_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Runtime)};
-
-                var actual = DateTime.Now;
-                var timeBeforeStart = actual.AddMinutes(1);
-
-                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
-                    .Should().BeFalse();
-
-            }
-
-            [Fact]
-            public void When_LifeCycle_is_Runtime_and_expected_is_not_TimeAfterStart_Should_be_false()
-            {
-                Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                SpecificColumn[] SpecificColumns =
-                    {new("database", "schema", "table", "column", LifeCycle.Runtime)};
-
-                var actual = DateTime.Now;
-                var timeBeforeStart = actual.AddMinutes(-1);
-
-                column.Compare("2000/01/01", actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
-                    .Should().BeFalse();
-
+                column.Compare(expectedCell, actualCell, new List<SpecificColumn>(), timeBeforeStart)
+                    .Should().Be(result);
             }
         }
     }
