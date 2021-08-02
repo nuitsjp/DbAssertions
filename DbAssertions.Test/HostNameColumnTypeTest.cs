@@ -48,18 +48,28 @@ namespace DbAssertions.Test
 
         public class ToExpected : HostNameColumnTypeTest
         {
+            private readonly Column _column =
+                new ("database", "schema", "table", "column", ColumnType.Other, false, 0);
+
             [Fact]
-            public void When_value_is_equal_Should_return_value()
+            public void When_value_is_equal_and_not_matches_host_name_Should_return_value()
             {
-                Subject.ToExpected("foo", "foo")
+                Subject.ToExpected(_column, 1, "foo", "foo")
                     .Should().Be("foo");
             }
 
             [Fact]
-            public void When_value_is_not_equal_Should_return_label()
+            public void When_value_is_equal_and_matches_host_name_Should_return_host_name_label()
             {
-                Subject.ToExpected("foo", "var")
+                Subject.ToExpected(_column, 1, Dns.GetHostName(), Dns.GetHostName())
                     .Should().Be("HostName");
+            }
+
+            [Fact]
+            public void When_value_is_not_equal_Should_throw_exception()
+            {
+                Subject.Invoking(x => x.ToExpected(_column, 1, "foo", "var"))
+                    .ShouldThrow<DbAssertionsException>();
             }
         }
     }

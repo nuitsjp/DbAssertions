@@ -23,13 +23,19 @@ namespace DbAssertions
             return false;
         }
 
-        public string ToExpected(string firstCell, string secondCell)
+        public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {
             if (Equals(firstCell, secondCell))
             {
+                if (Equals(firstCell, Dns.GetHostName()))
+                {
+                    return HostNameLabel;
+                }
+
                 return firstCell;
             }
-            return HostNameLabel;
+
+            throw DbAssertionsException.FromUnableToExpected(column, rowNumber, firstCell, secondCell);
         }
     }
 }

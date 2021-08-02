@@ -60,6 +60,7 @@ namespace DbAssertions
             _schemaName = schemaName;
         }
 
+        public string DatabaseName => _databaseName;
         public string SchemaName => _schemaName;
         public string TableName => _tableName;
         public string ColumnName => _columnName;
@@ -110,7 +111,7 @@ namespace DbAssertions
             }
 
             // 日付カラムではないのでエラー
-            throw new DbAssertionsException($"[{_databaseName}].[{_schemaName}].[{_tableName}] テーブル {rowNumber} 行目の [{_columnName}] 列の1回目 [{firstCell}] と2回目 [{secondCell}] が不一致です。");
+            throw DbAssertionsException.FromUnableToExpected(this, rowNumber, firstCell, secondCell);
         }
 
         /// <summary>
