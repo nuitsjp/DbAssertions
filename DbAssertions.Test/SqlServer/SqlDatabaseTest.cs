@@ -65,7 +65,7 @@ namespace DbAssertions.Test.SqlServer
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
                     DateTime.Parse("2011/05/30 0:00:00"),
-                    new []{new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    new []{new SpecificColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
                     workDirectory);
 
                 compareResult.HasMismatched
@@ -80,7 +80,7 @@ namespace DbAssertions.Test.SqlServer
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
                     DateTime.Parse("2011/05/31 0:00:01"),
-                    new[] { new LifeCycleColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    new[] { new SpecificColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
                     workDirectory);
 
                 compareResult.HasMismatched

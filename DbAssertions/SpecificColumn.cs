@@ -1,9 +1,11 @@
-﻿namespace DbAssertions
+﻿using System;
+
+namespace DbAssertions
 {
     /// <summary>
     /// 実行時などに値が更新される可能性のあるカラムを表すクラス
     /// </summary>
-    public class LifeCycleColumn
+    public class SpecificColumn
     {
         /// <summary>
         /// データベース名
@@ -30,7 +32,7 @@
         /// <param name="tableName"></param>
         /// <param name="columnName"></param>
         /// <param name="lifeCycle"></param>
-        public LifeCycleColumn(string? databaseName, string? schemaName, string? tableName, string columnName, LifeCycle lifeCycle)
+        public SpecificColumn(string? databaseName, string? schemaName, string? tableName, string columnName, LifeCycle lifeCycle)
         {
             _databaseName = databaseName;
             _schemaName = schemaName;

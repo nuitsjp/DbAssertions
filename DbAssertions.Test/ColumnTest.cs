@@ -80,7 +80,7 @@ namespace DbAssertions.Test
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
                 var value = "value";
-                column.Compare(value, value, Enumerable.Empty<LifeCycleColumn>(), DateTime.MaxValue)
+                column.Compare(value, value, Enumerable.Empty<SpecificColumn>(), DateTime.MaxValue)
                     .Should().BeTrue();
             }
 
@@ -88,29 +88,29 @@ namespace DbAssertions.Test
             public void When_not_equal_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.Other, true, 1);
-                column.Compare("value1", "value2", Enumerable.Empty<LifeCycleColumn>(), DateTime.MaxValue)
+                column.Compare("value1", "value2", Enumerable.Empty<SpecificColumn>(), DateTime.MaxValue)
                     .Should().BeFalse();
             }
 
             [Fact]
-            public void When_LifeCycleColumn_and_expected_is_empty_Should_be_false()
+            public void When_SpecificColumn_and_expected_is_empty_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
-                column.Compare(string.Empty, "value", lifeCycleColumns, DateTime.MaxValue)
+                column.Compare(string.Empty, "value", SpecificColumns, DateTime.MaxValue)
                     .Should().BeFalse();
             }
 
             [Fact]
-            public void When_LifeCycleColumn_and_actual_is_empty_Should_be_false()
+            public void When_SpecificColumn_and_actual_is_empty_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
-                column.Compare("value", string.Empty, lifeCycleColumns, DateTime.MaxValue)
+                column.Compare("value", string.Empty, SpecificColumns, DateTime.MaxValue)
                     .Should().BeFalse();
             }
 
@@ -118,10 +118,10 @@ namespace DbAssertions.Test
             public void When_LifeCycle_is_Daily_and_DateTime_format_Should_be_true()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
-                column.Compare("value", "2000/01/01", lifeCycleColumns, DateTime.MaxValue)
+                column.Compare("value", "2000/01/01", SpecificColumns, DateTime.MaxValue)
                     .Should().BeTrue();
             }
 
@@ -129,10 +129,10 @@ namespace DbAssertions.Test
             public void When_LifeCycle_is_Daily_and_not_DateTime_format_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Daily)};
 
-                column.Compare("foo", "bar", lifeCycleColumns, DateTime.MaxValue)
+                column.Compare("foo", "bar", SpecificColumns, DateTime.MaxValue)
                     .Should().BeFalse();
             }
 
@@ -140,13 +140,13 @@ namespace DbAssertions.Test
             public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_after_timeBeforeStart_Should_be_true()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns = 
+                SpecificColumn[] SpecificColumns = 
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
                 var actual = DateTime.Now;
                 var timeBeforeStart = actual.AddMinutes(-1);
 
-                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), lifeCycleColumns, timeBeforeStart)
+                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
                     .Should().BeTrue();
 
             }
@@ -156,13 +156,13 @@ namespace DbAssertions.Test
             public void When_LifeCycle_is_Runtime_and_expected_is_TimeAfterStart_and_actual_before_timeBeforeStart_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
                 var actual = DateTime.Now;
                 var timeBeforeStart = actual.AddMinutes(1);
 
-                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), lifeCycleColumns, timeBeforeStart)
+                column.Compare(Column.TimeAfterStart, actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
                     .Should().BeFalse();
 
             }
@@ -171,13 +171,13 @@ namespace DbAssertions.Test
             public void When_LifeCycle_is_Runtime_and_expected_is_not_TimeAfterStart_Should_be_false()
             {
                 Column column = new("database", "schema", "table", "column", ColumnType.DateTime, true, 1);
-                LifeCycleColumn[] lifeCycleColumns =
+                SpecificColumn[] SpecificColumns =
                     {new("database", "schema", "table", "column", LifeCycle.Runtime)};
 
                 var actual = DateTime.Now;
                 var timeBeforeStart = actual.AddMinutes(-1);
 
-                column.Compare("2000/01/01", actual.ToString(CultureInfo.InvariantCulture), lifeCycleColumns, timeBeforeStart)
+                column.Compare("2000/01/01", actual.ToString(CultureInfo.InvariantCulture), SpecificColumns, timeBeforeStart)
                     .Should().BeFalse();
 
             }

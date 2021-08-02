@@ -144,7 +144,7 @@ namespace DbAssertions
         public CompareResult Compare(
             FileInfo expectedFileInfo,
             DateTime setupCompletionTime,
-            IEnumerable<LifeCycleColumn> lifeCycleColumns,
+            IEnumerable<SpecificColumn> lifeCycleColumns,
             DirectoryInfo directoryInfo,
             string because = "",
             params object[] becauseArgs)
@@ -159,7 +159,7 @@ namespace DbAssertions
             // 一旦この形で対応する
             var timeBeforeStart = DateTime.Parse(setupCompletionTime.ToString(CultureInfo.InvariantCulture));
 
-            var lifeCycleColumnsArray = lifeCycleColumns as LifeCycleColumn[] ?? lifeCycleColumns.ToArray();
+            var lifeCycleColumnsArray = lifeCycleColumns as SpecificColumn[] ?? lifeCycleColumns.ToArray();
 
             CompareResult compareResult = new();
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する

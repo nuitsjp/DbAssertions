@@ -118,10 +118,10 @@ namespace DbAssertions
         /// </summary>
         /// <param name="expectedCell"></param>
         /// <param name="actualCell"></param>
-        /// <param name="lifeCycleColumns"></param>
+        /// <param name="specificColumns"></param>
         /// <param name="timeBeforeStart"></param>
         /// <returns></returns>
-        internal bool Compare(string expectedCell, string actualCell, IEnumerable<LifeCycleColumn> lifeCycleColumns, DateTime timeBeforeStart)
+        internal bool Compare(string expectedCell, string actualCell, IEnumerable<SpecificColumn> specificColumns, DateTime timeBeforeStart)
         {
             if (Equals(expectedCell, actualCell))
             {
@@ -129,11 +129,11 @@ namespace DbAssertions
                 return true;
             }
 
-            var matchedLifeCycleColumns =
-                lifeCycleColumns
+            var matchedSpecificColumns =
+                specificColumns
                     .Where(x => x.Match(_databaseName, _schemaName, _tableName, _columnName))
                     .ToArray();
-            if (matchedLifeCycleColumns.IsNullOrEmpty())
+            if (matchedSpecificColumns.IsNullOrEmpty())
             {
                 // ファイルサイクルカラムではない場合、値が違えば不一致
                 return false;
@@ -146,7 +146,7 @@ namespace DbAssertions
                 return false;
             }
 
-            if (matchedLifeCycleColumns.Any(x => x.LifeCycle == LifeCycle.Daily))
+            if (matchedSpecificColumns.Any(x => x.LifeCycle == LifeCycle.Daily))
             {
                 // 実行時ではなく、日次で更新される値は日付書式なら一致とする
                 // これを増やしすぎるとテストにならないので要注意
