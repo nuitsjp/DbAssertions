@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using DbAssertions.SqlServer;
@@ -9,6 +10,8 @@ namespace DbAssertions.Test.SqlServer
 {
     public class SqlDatabaseTest
     {
+        private static readonly DateTime TimeBeforeStart = DateTime.Parse("2020/01/01");
+
         protected readonly Database Database = new SqlDatabase("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
         public class FirstExport : SqlDatabaseTest
         {
