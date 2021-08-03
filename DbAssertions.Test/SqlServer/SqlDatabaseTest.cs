@@ -89,7 +89,7 @@ namespace DbAssertions.Test.SqlServer
 
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
-                    DateTime.Parse("2020/01/01"),
+                    TimeBeforeStart,
                     Context,
                     workDirectory);
 
@@ -106,7 +106,7 @@ namespace DbAssertions.Test.SqlServer
 
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
-                    DateTime.Parse("2011/05/31 0:00:01"),
+                    TimeBeforeStart,
                     Context,
                     workDirectory);
 
