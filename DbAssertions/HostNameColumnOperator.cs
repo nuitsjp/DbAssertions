@@ -5,10 +5,17 @@ namespace DbAssertions
 {
     public class HostNameColumnOperator : IColumnOperator
     {
+        public static readonly string DefaultLabel = "HostName";
+
         public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {
             if (Equals(firstCell, secondCell))
             {
+                if (Equals(firstCell, Dns.GetHostName()))
+                {
+                    return DefaultLabel;
+                }
+
                 return firstCell;
             }
 

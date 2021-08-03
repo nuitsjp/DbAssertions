@@ -26,6 +26,13 @@ namespace DbAssertions.Test
             }
 
             [Fact]
+            public void Where_first_equal_second_and_host_name_Should_return_label()
+            {
+                Subject.ToExpected(_column, 1, Dns.GetHostName(), Dns.GetHostName())
+                    .Should().Be(HostNameColumnOperator.DefaultLabel);
+            }
+
+            [Fact]
             public void Where_first_not_equal_second_Should_thrown_exception()
             {
                 Subject.Invoking(x => x.ToExpected(_column, 1, "foo", "bar"))

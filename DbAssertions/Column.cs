@@ -81,10 +81,9 @@ namespace DbAssertions
         /// </summary>
         /// <param name="expectedCell"></param>
         /// <param name="actualCell"></param>
-        /// <param name="specificColumns"></param>
         /// <param name="timeBeforeStart"></param>
         /// <returns></returns>
-        internal bool Compare(string expectedCell, string actualCell, IEnumerable<SpecificColumn> specificColumns, DateTime timeBeforeStart)
+        internal bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
             => _columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
     }
 }

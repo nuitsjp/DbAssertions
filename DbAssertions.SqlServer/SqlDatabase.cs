@@ -56,11 +56,11 @@ namespace DbAssertions.SqlServer
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected override List<Table> GetTables()
+        protected override List<Table> GetTables(IDbAssertionsContext context)
         {
             using var connection = OpenConnection();
 
-            var columns = GetTableColumns(connection);
+            var columns = GetTableColumns(connection, context);
 
             using var command = connection.CreateCommand();
             command.CommandText = @$"
@@ -101,7 +101,7 @@ order by
         /// テーブルの列を取得する。
         /// </summary>
         /// <returns></returns>
-        private List<Column> GetTableColumns(IDbConnection connection)
+        private List<Column> GetTableColumns(IDbConnection connection, IDbAssertionsContext context)
         {
             using var command = connection.CreateCommand();
 
@@ -142,6 +142,9 @@ order by
             List<Column> columns = new();
             while (reader.Read())
             {
+                var schemaName = (string)reader["SchemaName"];
+                var tableName = (string)reader["TableName"];
+                var columnName = (string)reader["ColumnName"];
                 var columnType = (byte) reader["SystemTypeId"] switch
                 {
                     (byte) ColumnType.VarBinary => ColumnType.VarBinary,
@@ -149,16 +152,13 @@ order by
                     (byte) ColumnType.DateTime2 => ColumnType.DateTime2,
                     _ => ColumnType.Other
                 };
-                IColumnOperator columnOperator =
-                    (columnType == ColumnType.DateTime || columnType == ColumnType.DateTime2)
-                        ? new RunTimeColumnOperator()
-                        : new DefaultColumnOperator();
+                var columnOperator = context.GetColumnOperator(DatabaseName, schemaName, tableName, columnName, columnType);
                 columns.Add(
                     new Column(
                         DatabaseName,
-                        (string)reader["SchemaName"],
-                        (string)reader["TableName"],
-                        (string)reader["ColumnName"],
+                        schemaName,
+                        tableName,
+                        columnName,
                         columnType,
                         Convert.ToBoolean(reader["IsPrimaryKey"]),
                         (int)reader["PrimaryKeyOrdinal"],

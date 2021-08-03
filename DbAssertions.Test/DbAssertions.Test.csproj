@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Microsoft.SqlServer.Types" Version="10.50.1600.1" />
@@ -25,7 +26,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="DatabaseTest\CompareUnMatches.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\CompareMatches.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="DatabaseTest\Compare\ExpectedAdventureWorks.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\First.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="DatabaseTest\FirstExport\ToBeExported\[dbo].[AWBuildVersion].csv">
@@ -239,6 +249,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="DatabaseTest\FirstExport\ToBeExported\[Sales].[Store].csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DatabaseTest\Second.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[dbo].[AWBuildVersion].csv">

@@ -41,7 +41,7 @@ namespace DbAssertions
         {
             var exportDirectoryInfo = directoryInfo.GetDirectory("First").ReCreate();
 
-            var tables = GetTables();
+            var tables = GetTables(new DbAssertionsContext());
 
             Parallel.ForEach(tables, table =>
             {
@@ -53,8 +53,16 @@ namespace DbAssertions
         /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
         /// </summary>
         /// <param name="directoryInfo"></param>
+        public void SecondExport(DirectoryInfo directoryInfo) => SecondExport(directoryInfo, new DbAssertionsContext());
+
+        /// <summary>
+        /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
+        /// </summary>
+        /// <param name="directoryInfo"></param>
+        /// <param name="context"></param>
         public void SecondExport(
-            DirectoryInfo directoryInfo)
+            DirectoryInfo directoryInfo,
+            IDbAssertionsContext context)
         {
             var firstDirectoryInfo = directoryInfo.GetDirectory("First");
             if (firstDirectoryInfo.NotExist())
@@ -62,7 +70,7 @@ namespace DbAssertions
                 throw new InvalidOperationException("初回エクスポートフォルダが存在しません");
             }
 
-            var tables = GetTables();
+            var tables = GetTables(context);
 
             // 2回目のエクスポートディレクトリを作成する
             var secondDirectoryInfo = directoryInfo.GetDirectory("Second");
@@ -137,19 +145,19 @@ namespace DbAssertions
         /// </summary>
         /// <param name="expectedFileInfo"></param>
         /// <param name="setupCompletionTime"></param>
-        /// <param name="lifeCycleColumns"></param>
+        /// <param name="context"></param>
         /// <param name="directoryInfo"></param>
         /// <param name="because"></param>
         /// <param name="becauseArgs"></param>
         public CompareResult Compare(
             FileInfo expectedFileInfo,
             DateTime setupCompletionTime,
-            IEnumerable<SpecificColumn> lifeCycleColumns,
+            IDbAssertionsContext context,
             DirectoryInfo directoryInfo,
             string because = "",
             params object[] becauseArgs)
         {
-            var tables = GetTables();
+            var tables = GetTables(context);
 
             // 期待結果zipファイルを展開する
             using var compressStreamA = expectedFileInfo.OpenRead();
@@ -158,8 +166,6 @@ namespace DbAssertions
             // データをExportしたときに文字列化する。その際の精度の問題で開始時刻より、実施時刻が前になることがある
             // 一旦この形で対応する
             var timeBeforeStart = DateTime.Parse(setupCompletionTime.ToString(CultureInfo.InvariantCulture));
-
-            var lifeCycleColumnsArray = lifeCycleColumns as SpecificColumn[] ?? lifeCycleColumns.ToArray();
 
             CompareResult compareResult = new();
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
@@ -195,7 +201,7 @@ namespace DbAssertions
                     {
                         var expectedRecordCell = (string)expectedRecordRecord[column];
                         var actualRecordCell = (string)actualRecord[column];
-                        if (!column.Compare(expectedRecordCell, actualRecordCell, lifeCycleColumnsArray, timeBeforeStart))
+                        if (!column.Compare(expectedRecordCell, actualRecordCell, timeBeforeStart))
                         {
                             if (expectedRecordCell == Column.TimeAfterStart)
                             {
@@ -245,6 +251,6 @@ namespace DbAssertions
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected abstract List<Table> GetTables();
+        protected abstract List<Table> GetTables(IDbAssertionsContext context);
     }
 }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
+using Dapper;
 using DbAssertions.SqlServer;
 using FluentAssertions;
 using Xunit;
@@ -12,7 +15,19 @@ namespace DbAssertions.Test.SqlServer
     {
         private static readonly DateTime TimeBeforeStart = DateTime.Parse("2020/01/01");
 
-        protected readonly Database Database = new SqlDatabase("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
+        protected readonly SqlDatabase Database = new ("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
+        protected readonly DbAssertionsContext Context;
+
+        public SqlDatabaseTest()
+        {
+            Context = new DbAssertionsContext();
+            Context.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
+            Context.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
+            Context.AddColumnOperator(null, null, "Person", "ModifiedDate", null, ColumnOperators.RunTime);
+            Context.AddColumnOperator(null, null, "Employee", "ModifiedDate", null, ColumnOperators.SetupTime);
+        }
+
+        [Collection(nameof(SqlDatabaseTest))]
         public class FirstExport : SqlDatabaseTest
         {
             private readonly DirectoryInfo _first = new DirectoryInfo("FirstActual").ReCreate();
@@ -20,17 +35,21 @@ namespace DbAssertions.Test.SqlServer
             [Fact]
             public void ToBeExported()
             {
+                ExecuteNonQuery(@"DatabaseTest\First.sql");
                 Database.FirstExport(_first);
                 _first.GetDirectory("First")
                     .Should().HaveSameContents(new DirectoryInfo(@"DatabaseTest\FirstExport\ToBeExported"));
             }
         }
 
+        [Collection(nameof(SqlDatabaseTest))]
         public class SecondExport : SqlDatabaseTest
         {
             [Fact]
             public void ToBeExported()
             {
+                ExecuteNonQuery(@"DatabaseTest\Second.sql");
+
                 var workDirectory = new DirectoryInfo(@"DatabaseTest\SecondExport\ToBeExported");
                 var secondDirectory = workDirectory.GetDirectory("Second").ForceDelete();
                 var expectedDirectory = workDirectory.GetDirectory("Expected").ForceDelete();
@@ -44,7 +63,7 @@ namespace DbAssertions.Test.SqlServer
                     // ignore
                 }
 
-                Database.SecondExport(workDirectory);
+                Database.SecondExport(workDirectory, Context);
 
                 var zipArchive = ZipFile.OpenRead(
                     @"DatabaseTest\SecondExport\ToBeExported\ExpectedAdventureWorks.zip");
@@ -58,17 +77,20 @@ namespace DbAssertions.Test.SqlServer
             }
         }
 
+        [Collection(nameof(SqlDatabaseTest))]
         public class Compare : SqlDatabaseTest
         {
             [Fact]
             public void Matches()
             {
+                ExecuteNonQuery(@"DatabaseTest\CompareMatches.sql");
+
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
-                    DateTime.Parse("2011/05/30 0:00:00"),
-                    new []{new SpecificColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    DateTime.Parse("2020/01/01"),
+                    Context,
                     workDirectory);
 
                 compareResult.HasMismatched
@@ -78,17 +100,33 @@ namespace DbAssertions.Test.SqlServer
             [Fact]
             public void UnMatches()
             {
+                ExecuteNonQuery(@"DatabaseTest\CompareUnMatches.sql");
+
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
                     DateTime.Parse("2011/05/31 0:00:01"),
-                    new[] { new SpecificColumn(null, null, "SalesOrderDetail", "ModifiedDate", LifeCycle.Runtime) },
+                    Context,
                     workDirectory);
 
                 compareResult.HasMismatched
                     .Should().BeTrue();
             }
+        }
+
+        private void ExecuteNonQuery(string sqlFile)
+        {
+            var connectionString = new SqlConnectionStringBuilder
+            {
+                DataSource = Database.Server,
+                InitialCatalog = Database.DatabaseName,
+                UserID = Database.UserId,
+                Password = Database.Password
+            }.ToString();
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+            connection.Execute(File.ReadAllText(sqlFile).Replace("%HostName%", Dns.GetHostName()));
         }
     }
 

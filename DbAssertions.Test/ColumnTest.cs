@@ -63,7 +63,7 @@ namespace DbAssertions.Test
                     .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))
                     .Returns(result);
 
-                column.Compare(expectedCell, actualCell, new List<SpecificColumn>(), timeBeforeStart)
+                column.Compare(expectedCell, actualCell, timeBeforeStart)
                     .Should().Be(result);
             }
         }
