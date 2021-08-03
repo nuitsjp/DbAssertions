@@ -20,4 +20,10 @@
     <ProjectReference Include="..\DbAssertions.SqlServer\DbAssertions.SqlServer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="DbAssertions.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

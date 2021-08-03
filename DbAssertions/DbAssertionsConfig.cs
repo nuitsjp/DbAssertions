@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DbAssertions
 {
@@ -30,6 +36,46 @@ namespace DbAssertions
             }
 
             return DefaultColumnOperator;
+        }
+
+        public static IDbAssertionsConfig Deserialize(string filePath)
+        {
+            DbAssertionsConfig config = new();
+            dynamic json = JsonConvert.DeserializeObject(File.ReadAllText(filePath, Encoding.UTF8))!;
+            var columnOperatorConditions = (JArray)json.ColumnOperatorConditions!;
+            foreach (dynamic columnOperatorCondition in columnOperatorConditions)
+            {
+                config.AddColumnOperator(
+                    (string)columnOperatorCondition.DatabaseName,
+                    (string)columnOperatorCondition.SchemaName,
+                    (string)columnOperatorCondition.TableName,
+                    (string)columnOperatorCondition.ColumnName,
+                    GetColumnType((string)columnOperatorCondition.ColumnType),
+                    (string)columnOperatorCondition.ColumnOperator switch
+                    {
+                        "HostName" => ColumnOperators.HostName,
+                        "RunTime" => ColumnOperators.RunTime,
+                        "Random" => ColumnOperators.Random,
+                        "SetupTime" => ColumnOperators.SetupTime,
+                        _ => throw new DbAssertionsException($"ColumnOperator {columnOperatorCondition.ColumnOperator} does not exist.")
+                    });
+            }
+            return config;
+        }
+
+        private static ColumnType? GetColumnType(string? value)
+        {
+            if (value.IsNullOrEmpty())
+            {
+                return null;
+            }
+
+            if (Enum.TryParse(value, out ColumnType columnType))
+            {
+                return columnType;
+            }
+
+            throw new DbAssertionsException($"ColumnType {value} does not exist.");
         }
 
         private class ColumnOperatorCondition

@@ -39,7 +39,15 @@ namespace DbAssertions.SqlServer.App
             [Option("p", "パスワード")] string password,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
-            new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output));
+            if (File.Exists("DbAssertions.json"))
+            {
+                var config = DbAssertionsConfig.Deserialize("DbAssertions.json");
+                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), config);
+            }
+            else
+            {
+                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output));
+            }
         }
     }
 }
