@@ -41,7 +41,7 @@ namespace DbAssertions
         {
             var exportDirectoryInfo = directoryInfo.GetDirectory("First").ReCreate();
 
-            var tables = GetTables(new DbAssertionsContext());
+            var tables = GetTables(new DbAssertionsConfig());
 
             Parallel.ForEach(tables, table =>
             {
@@ -53,16 +53,16 @@ namespace DbAssertions
         /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
         /// </summary>
         /// <param name="directoryInfo"></param>
-        public void SecondExport(DirectoryInfo directoryInfo) => SecondExport(directoryInfo, new DbAssertionsContext());
+        public void SecondExport(DirectoryInfo directoryInfo) => SecondExport(directoryInfo, new DbAssertionsConfig());
 
         /// <summary>
         /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
         /// </summary>
         /// <param name="directoryInfo"></param>
-        /// <param name="context"></param>
+        /// <param name="config"></param>
         public void SecondExport(
             DirectoryInfo directoryInfo,
-            IDbAssertionsContext context)
+            IDbAssertionsConfig config)
         {
             var firstDirectoryInfo = directoryInfo.GetDirectory("First");
             if (firstDirectoryInfo.NotExist())
@@ -70,7 +70,7 @@ namespace DbAssertions
                 throw new InvalidOperationException("初回エクスポートフォルダが存在しません");
             }
 
-            var tables = GetTables(context);
+            var tables = GetTables(config);
 
             // 2回目のエクスポートディレクトリを作成する
             var secondDirectoryInfo = directoryInfo.GetDirectory("Second");
@@ -145,19 +145,19 @@ namespace DbAssertions
         /// </summary>
         /// <param name="expectedFileInfo"></param>
         /// <param name="setupCompletionTime"></param>
-        /// <param name="context"></param>
+        /// <param name="config"></param>
         /// <param name="directoryInfo"></param>
         /// <param name="because"></param>
         /// <param name="becauseArgs"></param>
         public CompareResult Compare(
             FileInfo expectedFileInfo,
             DateTime setupCompletionTime,
-            IDbAssertionsContext context,
+            IDbAssertionsConfig config,
             DirectoryInfo directoryInfo,
             string because = "",
             params object[] becauseArgs)
         {
-            var tables = GetTables(context);
+            var tables = GetTables(config);
 
             // 期待結果zipファイルを展開する
             using var compressStreamA = expectedFileInfo.OpenRead();
@@ -251,6 +251,6 @@ namespace DbAssertions
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected abstract List<Table> GetTables(IDbAssertionsContext context);
+        protected abstract List<Table> GetTables(IDbAssertionsConfig config);
     }
 }

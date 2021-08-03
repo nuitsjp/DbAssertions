@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace DbAssertions
 {
-    public class DbAssertionsContext : IDbAssertionsContext
+    public class DbAssertionsConfig : IDbAssertionsConfig
     {
         private readonly List<ColumnCondition> _columnConditions = new();
 

@@ -56,11 +56,11 @@ namespace DbAssertions.SqlServer
         /// データベースのすべてのユーザーテーブルを取得する。
         /// </summary>
         /// <returns></returns>
-        protected override List<Table> GetTables(IDbAssertionsContext context)
+        protected override List<Table> GetTables(IDbAssertionsConfig config)
         {
             using var connection = OpenConnection();
 
-            var columns = GetTableColumns(connection, context);
+            var columns = GetTableColumns(connection, config);
 
             using var command = connection.CreateCommand();
             command.CommandText = @$"
@@ -101,7 +101,7 @@ order by
         /// テーブルの列を取得する。
         /// </summary>
         /// <returns></returns>
-        private List<Column> GetTableColumns(IDbConnection connection, IDbAssertionsContext context)
+        private List<Column> GetTableColumns(IDbConnection connection, IDbAssertionsConfig config)
         {
             using var command = connection.CreateCommand();
 
@@ -152,7 +152,7 @@ order by
                     (byte) ColumnType.DateTime2 => ColumnType.DateTime2,
                     _ => ColumnType.Other
                 };
-                var columnOperator = context.GetColumnOperator(DatabaseName, schemaName, tableName, columnName, columnType);
+                var columnOperator = config.GetColumnOperator(DatabaseName, schemaName, tableName, columnName, columnType);
                 columns.Add(
                     new Column(
                         DatabaseName,

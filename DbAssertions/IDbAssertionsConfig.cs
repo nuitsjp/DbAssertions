@@ -1,6 +1,6 @@
 ﻿namespace DbAssertions
 {
-    public interface IDbAssertionsContext
+    public interface IDbAssertionsConfig
     {
         void AddColumnOperator(
             string? databaseName,

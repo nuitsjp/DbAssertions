@@ -16,15 +16,15 @@ namespace DbAssertions.Test.SqlServer
         private static readonly DateTime TimeBeforeStart = DateTime.Parse("2020/01/01");
 
         protected readonly SqlDatabase Database = new ("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
-        protected readonly DbAssertionsContext Context;
+        protected readonly DbAssertionsConfig Config;
 
         public SqlDatabaseTest()
         {
-            Context = new DbAssertionsContext();
-            Context.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
-            Context.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
-            Context.AddColumnOperator(null, null, "Person", "ModifiedDate", null, ColumnOperators.RunTime);
-            Context.AddColumnOperator(null, null, "Employee", "ModifiedDate", null, ColumnOperators.SetupTime);
+            Config = new DbAssertionsConfig();
+            Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
+            Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
+            Config.AddColumnOperator(null, null, "Person", "ModifiedDate", null, ColumnOperators.RunTime);
+            Config.AddColumnOperator(null, null, "Employee", "ModifiedDate", null, ColumnOperators.SetupTime);
         }
 
         [Collection(nameof(SqlDatabaseTest))]
@@ -63,7 +63,7 @@ namespace DbAssertions.Test.SqlServer
                     // ignore
                 }
 
-                Database.SecondExport(workDirectory, Context);
+                Database.SecondExport(workDirectory, Config);
 
                 var zipArchive = ZipFile.OpenRead(
                     @"DatabaseTest\SecondExport\ToBeExported\ExpectedAdventureWorks.zip");
@@ -90,7 +90,7 @@ namespace DbAssertions.Test.SqlServer
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
                     TimeBeforeStart,
-                    Context,
+                    Config,
                     workDirectory);
 
                 compareResult.HasMismatched
@@ -107,7 +107,7 @@ namespace DbAssertions.Test.SqlServer
                 var compareResult = Database.Compare(
                     new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
                     TimeBeforeStart,
-                    Context,
+                    Config,
                     workDirectory);
 
                 compareResult.HasMismatched
