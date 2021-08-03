@@ -5,18 +5,18 @@ namespace DbAssertions
 {
     public class DbAssertionsConfig : IDbAssertionsConfig
     {
-        private readonly List<ColumnCondition> _columnConditions = new();
+        private readonly List<ColumnOperatorCondition> _conditions = new();
 
         public void AddColumnOperator(string? databaseName, string? schemaName, string? tableName, string? columnName,
             ColumnType? columnType, IColumnOperator columnOperator)
-            => _columnConditions.Add(new ColumnCondition(databaseName, schemaName, tableName, columnName, columnType, columnOperator));
+            => _conditions.Add(new ColumnOperatorCondition(databaseName, schemaName, tableName, columnName, columnType, columnOperator));
 
         public IColumnOperator DefaultColumnOperator { get; set; } = new DefaultColumnOperator();
 
         public IColumnOperator GetColumnOperator(string databaseName, string schemaName, string tableName, string columnName,
             ColumnType columnType)
         {
-            var columnCondition = _columnConditions
+            var columnCondition = _conditions
                 .FirstOrDefault(
                     x =>
                         (x.DatabaseName is null || databaseName.Contains(x.DatabaseName))
@@ -32,9 +32,9 @@ namespace DbAssertions
             return DefaultColumnOperator;
         }
 
-        private class ColumnCondition
+        private class ColumnOperatorCondition
         {
-            public ColumnCondition(string? databaseName, string? schemaName, string? tableName, string? columnName, ColumnType? columnType, IColumnOperator columnOperator)
+            public ColumnOperatorCondition(string? databaseName, string? schemaName, string? tableName, string? columnName, ColumnType? columnType, IColumnOperator columnOperator)
             {
                 DatabaseName = databaseName;
                 SchemaName = schemaName;
@@ -51,5 +51,6 @@ namespace DbAssertions
             public ColumnType? ColumnType { get; }
             public IColumnOperator ColumnOperator { get; }
         }
+
     }
 }
