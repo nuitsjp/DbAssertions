@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DbAssertions
 {
@@ -25,6 +24,7 @@ namespace DbAssertions
         /// <param name="columnType"></param>
         /// <param name="isPrimaryKey"></param>
         /// <param name="primaryKeyOrdinal"></param>
+        /// <param name="columnOperator"></param>
         public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType, bool isPrimaryKey, int primaryKeyOrdinal, IColumnOperator columnOperator)
         {
             TableName = tableName;

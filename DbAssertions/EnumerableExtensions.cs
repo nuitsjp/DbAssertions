@@ -2,7 +2,7 @@
 using System.Linq;
 #if NET40
 #else
-using System;
+
 #endif
 
 namespace DbAssertions

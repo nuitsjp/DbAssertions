@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
@@ -51,8 +50,6 @@ namespace DbAssertions.Test.SqlServer
                 ExecuteNonQuery(@"DatabaseTest\Second.sql");
 
                 var workDirectory = new DirectoryInfo(@"DatabaseTest\SecondExport\ToBeExported");
-                var secondDirectory = workDirectory.GetDirectory("Second").ForceDelete();
-                var expectedDirectory = workDirectory.GetDirectory("Expected").ForceDelete();
                 var expectedFile = workDirectory.GetFile("ExpectedAdventureWorks.zip");
                 try
                 {

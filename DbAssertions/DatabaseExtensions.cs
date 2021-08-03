@@ -1,6 +1,4 @@
-﻿using System.IO;
-using FluentAssertions;
-using FluentAssertions.Primitives;
+﻿using FluentAssertions.Primitives;
 
 namespace DbAssertions
 {

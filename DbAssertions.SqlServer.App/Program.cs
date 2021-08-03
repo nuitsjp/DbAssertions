@@ -18,6 +18,7 @@ namespace DbAssertions.SqlServer.App
         /// １回目のデータのエクスポート
         /// </summary>
         [Command("first")]
+        // ReSharper disable once UnusedMember.Global
         public void First(
             [Option("s", "サーバー")] string server,
             [Option("d", "データベース")] string database,
@@ -32,6 +33,7 @@ namespace DbAssertions.SqlServer.App
         /// 2回目のデータのエクスポートと期待結果ファイルの作成
         /// </summary>
         [Command("second")]
+        // ReSharper disable once UnusedMember.Global
         public void Second(
             [Option("s", "サーバー")] string server,
             [Option("d", "データベース")] string database,

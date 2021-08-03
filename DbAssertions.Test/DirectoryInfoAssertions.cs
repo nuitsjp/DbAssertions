@@ -51,6 +51,7 @@ namespace DbAssertions.Test
         private static void HasSameFiles(
             DirectoryInfo directoryA,
             DirectoryInfo directoryB,
+            // ReSharper disable once UnusedParameter.Local
             bool ignoreNumbersInFileName,
             string because = "",
             params object[] becauseArgs)

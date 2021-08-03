@@ -4,7 +4,6 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -100,7 +99,7 @@ namespace DbAssertions
                 using var expectedCsv = new CsvWriter(new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)));
 
                 // 1回目と2回目の全CSV行を読み込む
-                var tableReader = new TableReader(table.Columns);
+                ITableReader tableReader = new TableReader(table.Columns);
                 var firstRecords = tableReader.ReadAllRows(firstTableFile);
                 var secondRecords = tableReader.ReadAllRows(secondTableFile);
 
@@ -203,14 +202,9 @@ namespace DbAssertions
                         var actualRecordCell = (string)actualRecord[column];
                         if (!column.Compare(expectedRecordCell, actualRecordCell, timeBeforeStart))
                         {
-                            if (expectedRecordCell == Column.TimeAfterStart)
-                            {
-                                compareResult.AddMismatchedMessage($@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。DB初期化完了時刻 {timeBeforeStart} 、実際値 {actualRecordCell}。");
-                            }
-                            else
-                            {
-                                compareResult.AddMismatchedMessage($@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。期待値 {expectedRecordCell} 、実際値 {actualRecordCell}。");
-                            }
+                            compareResult.AddMismatchedMessage(expectedRecordCell == Column.TimeAfterStart
+                                ? $@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。DB初期化完了時刻 {timeBeforeStart} 、実際値 {actualRecordCell}。"
+                                : $@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。期待値 {expectedRecordCell} 、実際値 {actualRecordCell}。");
                         }
                     }
                 }
@@ -229,7 +223,7 @@ namespace DbAssertions
         {
             using var connection = OpenConnection();
 
-            using var tableWriter = new TableWriter(table, directoryInfo);
+            using ITableWriter tableWriter = new TableWriter(table, directoryInfo);
 
             try
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -40,7 +39,7 @@ namespace DbAssertions
 
         public static IDbAssertionsConfig Deserialize(string filePath)
         {
-            DbAssertionsConfig config = new();
+            IDbAssertionsConfig config = new DbAssertionsConfig();
             dynamic json = JsonConvert.DeserializeObject(File.ReadAllText(filePath, Encoding.UTF8))!;
             var columnOperatorConditions = (JArray)json.ColumnOperatorConditions!;
             foreach (dynamic columnOperatorCondition in columnOperatorConditions)
