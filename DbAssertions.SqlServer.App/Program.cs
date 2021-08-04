@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using ConsoleAppFramework;
 using Microsoft.Extensions.Hosting;
@@ -41,9 +42,11 @@ namespace DbAssertions.SqlServer.App
             [Option("p", "パスワード")] string password,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
-            if (File.Exists("DbAssertions.json"))
+            using var processModule = Process.GetCurrentProcess().MainModule!;
+            var configPath = Path.Combine(Path.GetDirectoryName(processModule.FileName)!, "DbAssertions.json");
+            if (File.Exists(configPath))
             {
-                var config = DbAssertionsConfig.Deserialize("DbAssertions.json");
+                var config = DbAssertionsConfig.Deserialize(configPath);
                 new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), config);
             }
             else
