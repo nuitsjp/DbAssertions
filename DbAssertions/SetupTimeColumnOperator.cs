@@ -54,8 +54,9 @@ namespace DbAssertions
 
             if (Equals(expectedCell, TimeBeforeStart))
             {
-                // 期待値がTimeAfterStartならテスト開始前の時刻より、actualが新しければ一致
-                return DateTime.Parse(actualCell) <= timeBeforeStart;
+                // 日付列は、初期化時に更新する列でも、テスト実施時も更新される可能性がある
+                // そのため、時刻は関係なく日付であれば正とする
+                return DateTime.TryParse(actualCell, out _);
             }
 
             // それ以外は不一致

@@ -55,10 +55,10 @@ namespace DbAssertions.Test
             }
 
             [Fact]
-            public void Where_actual_after_start_time_Should_be_false()
+            public void Where_actual_after_start_time_Should_be_true()
             {
                 Subject.Compare(SetupTimeColumnOperator.TimeBeforeStart, "2021/01/02", DateTime.Parse("2021/01/01"))
-                    .Should().BeFalse();
+                    .Should().BeTrue();
             }
         }
     }
