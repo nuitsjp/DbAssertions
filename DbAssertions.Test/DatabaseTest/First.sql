@@ -21,14 +21,14 @@ where
 update
 	[AdventureWorks].[Person].[Person]
 set
-	ModifiedDate = '2019/11/01'
+	ModifiedDate = '2000/1/1'
 where
 	BusinessEntityID = 1
 
 -- Setup Time
 update
-	[AdventureWorks].[HumanResources].[Employee]
+	[AdventureWorks].[Person].[Person]
 set
-	ModifiedDate = '2019/11/01'
+	ModifiedDate = '2000/1/3'
 where
-	BusinessEntityID = 1
+	BusinessEntityID = 2

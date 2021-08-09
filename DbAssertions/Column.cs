@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace DbAssertions
 {
@@ -7,6 +8,10 @@ namespace DbAssertions
     /// </summary>
     public class Column
     {
+        /// <summary>
+        /// String representing the time before the start.
+        /// </summary>
+        internal const string TimeBeforeStart = "TimeBeforeStart";
         /// <summary>
         /// 実行ごとに値が変わるセルを表す文字列
         /// </summary>
@@ -72,9 +77,32 @@ namespace DbAssertions
         /// <param name="firstCell"></param>
         /// <param name="secondCell"></param>
         /// <param name="rowNumber"></param>
+        /// <param name="initializedDateTime"></param>
         /// <returns></returns>
-        internal string ToExpected(string firstCell, string secondCell, int rowNumber) => 
-            _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
+        internal string ToExpected(string firstCell, string secondCell, int rowNumber, DateTime initializedDateTime)
+        {
+            if (Equals(firstCell, secondCell))
+            {
+                return firstCell;
+            }
+
+            if (firstCell.Any() && secondCell.Any())
+            {
+                if (ColumnType == ColumnType.DateTime)
+                {
+                    // いずれの値も空ではなかった場合、日付に変換する
+                    var secondDateTime = DateTime.Parse(secondCell);
+                    if (secondDateTime <= initializedDateTime)
+                    {
+                        return TimeBeforeStart;
+                    }
+
+                    return TimeAfterStart;
+                }
+            }
+
+            return _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
+        }
 
         /// <summary>
         /// 値を比較する
@@ -84,6 +112,32 @@ namespace DbAssertions
         /// <param name="timeBeforeStart"></param>
         /// <returns></returns>
         internal bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
-            => _columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
+        {
+            if (Equals(expectedCell, actualCell))
+            {
+                return true;
+            }
+
+            if (expectedCell.Any() && expectedCell.Any())
+            {
+                if (ColumnType == ColumnType.DateTime)
+                {
+                    var secondDateTime = DateTime.Parse(actualCell);
+                    if (Equals(expectedCell, TimeBeforeStart)
+                        && secondDateTime <= timeBeforeStart)
+                    {
+                        return true;
+                    }
+                    if (Equals(expectedCell, TimeAfterStart)
+                        && timeBeforeStart <= secondDateTime)
+                    {
+                        return true;
+                    }
+
+                }
+            }
+
+            return _columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
+        }
     }
 }

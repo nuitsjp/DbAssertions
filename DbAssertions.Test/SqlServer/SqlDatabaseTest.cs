@@ -12,7 +12,7 @@ namespace DbAssertions.Test.SqlServer
 {
     public class SqlDatabaseTest
     {
-        private static readonly DateTime TimeBeforeStart = DateTime.Parse("2020/01/01");
+        private static readonly DateTime TimeBeforeStart = DateTime.Parse("2000/02/02");
 
         protected readonly SqlDatabase Database = new ("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
         protected readonly DbAssertionsConfig Config;
@@ -22,8 +22,6 @@ namespace DbAssertions.Test.SqlServer
             Config = new DbAssertionsConfig();
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
-            Config.AddColumnOperator(null, null, "Person", "ModifiedDate", null, ColumnOperators.RunTime);
-            Config.AddColumnOperator(null, null, "Employee", "ModifiedDate", null, ColumnOperators.SetupTime);
         }
 
         [Collection(nameof(SqlDatabaseTest))]
@@ -60,8 +58,10 @@ namespace DbAssertions.Test.SqlServer
                     // ignore
                 }
 
-                Database.SecondExport(workDirectory, Config);
+                Database.SecondExport(workDirectory, TimeBeforeStart, Config);
 
+                new FileInfo(@"DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[Person].[Person].csv")
+                    .ReplaceContent("%HostName%", Dns.GetHostName());
                 var zipArchive = ZipFile.OpenRead(
                     @"DatabaseTest\SecondExport\ToBeExported\ExpectedAdventureWorks.zip");
                 foreach (var entry in zipArchive.Entries)
@@ -69,7 +69,8 @@ namespace DbAssertions.Test.SqlServer
                     entry.ReadAllBytes()
                         .Should().Equal(
                             File.ReadAllBytes(Path.Combine(@"DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected",
-                                entry.Name)));
+                                entry.Name)),
+                            entry.Name);
                 }
             }
         }

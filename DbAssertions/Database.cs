@@ -52,15 +52,20 @@ namespace DbAssertions
         /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
         /// </summary>
         /// <param name="directoryInfo"></param>
-        public void SecondExport(DirectoryInfo directoryInfo) => SecondExport(directoryInfo, new DbAssertionsConfig());
+        /// <param name="initializeDateTime"></param>
+        public void SecondExport(
+            DirectoryInfo directoryInfo,
+            DateTime initializeDateTime) => SecondExport(directoryInfo, initializeDateTime, new DbAssertionsConfig());
 
         /// <summary>
         /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
         /// </summary>
         /// <param name="directoryInfo"></param>
+        /// <param name="initializeDateTime"></param>
         /// <param name="config"></param>
         public void SecondExport(
             DirectoryInfo directoryInfo,
+            DateTime initializeDateTime,
             IDbAssertionsConfig config)
         {
             var firstDirectoryInfo = directoryInfo.GetDirectory("First");
@@ -122,7 +127,7 @@ namespace DbAssertions
                     {
                         var firstRecordCell = (string)firstRecord[column];
                         var secondRecordCell = (string)secondRecord[column];
-                        var expectedRecordCell = column.ToExpected(firstRecordCell, secondRecordCell, rowNumber);
+                        var expectedRecordCell = column.ToExpected(firstRecordCell, secondRecordCell, rowNumber, initializeDateTime);
                         expectedCsv.WriteField(expectedRecordCell);
                     }
                     expectedCsv.NextRecord();

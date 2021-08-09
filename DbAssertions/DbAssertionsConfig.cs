@@ -53,9 +53,7 @@ namespace DbAssertions
                     (string)columnOperatorCondition.ColumnOperator switch
                     {
                         "HostName" => ColumnOperators.HostName,
-                        "RunTime" => ColumnOperators.RunTime,
                         "Random" => ColumnOperators.Random,
-                        "SetupTime" => ColumnOperators.SetupTime,
                         _ => throw new DbAssertionsException($"ColumnOperator {columnOperatorCondition.ColumnOperator} does not exist.")
                     });
             }
