@@ -41,7 +41,7 @@ namespace DbAssertions.SqlServer.App
             [Option("d", "データベース")] string database,
             [Option("u", "ユーザー")] string userId,
             [Option("p", "パスワード")] string password,
-            [Option("i", "パスワード")] DateTime initializedDateTime,
+            [Option("i", "初期化完了時刻")] string initializedDateTime,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
             using var processModule = Process.GetCurrentProcess().MainModule!;
@@ -49,11 +49,11 @@ namespace DbAssertions.SqlServer.App
             if (File.Exists(configPath))
             {
                 var config = DbAssertionsConfig.Deserialize(configPath);
-                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), initializedDateTime, config);
+                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime), config);
             }
             else
             {
-                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), initializedDateTime);
+                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime));
             }
         }
     }
