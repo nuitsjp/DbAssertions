@@ -147,9 +147,9 @@ order by
                 var columnName = (string)reader["ColumnName"];
                 var columnType = (byte) reader["SystemTypeId"] switch
                 {
-                    (byte) ColumnType.VarBinary => ColumnType.VarBinary,
-                    (byte) ColumnType.DateTime => ColumnType.DateTime,
-                    (byte) ColumnType.DateTime2 => ColumnType.DateTime2,
+                    (byte) SqlColumnType.VarBinary => ColumnType.VarBinary,
+                    (byte) SqlColumnType.DateTime => ColumnType.DateTime,
+                    (byte) SqlColumnType.DateTime2 => ColumnType.DateTime,
                     _ => ColumnType.Other
                 };
                 var columnOperator = config.GetColumnOperator(DatabaseName, schemaName, tableName, columnName, columnType);

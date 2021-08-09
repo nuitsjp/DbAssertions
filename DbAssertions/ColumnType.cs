@@ -3,7 +3,7 @@
     /// <summary>
     /// カラム型
     /// </summary>
-    public enum ColumnType : byte
+    public enum ColumnType
     {
         /// <summary>
         /// その他
@@ -13,16 +13,11 @@
         /// <summary>
         /// バイナリー
         /// </summary>
-        VarBinary = 165,
+        VarBinary,
 
         /// <summary>
         /// 日時
         /// </summary>
-        DateTime = 61,
-
-        /// <summary>
-        /// datetime2
-        /// </summary>
-        DateTime2 = 42
+        DateTime,
     }
 }
