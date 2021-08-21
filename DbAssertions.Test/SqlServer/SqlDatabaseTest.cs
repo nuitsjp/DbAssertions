@@ -61,8 +61,6 @@ namespace DbAssertions.Test.SqlServer
 
                 Database.SecondExport(workDirectory, TimeBeforeStart, Config);
 
-                new FileInfo(@"DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected\[Person].[Person].csv")
-                    .ReplaceContent("%HostName%", Dns.GetHostName());
                 var zipArchive = ZipFile.OpenRead(
                     @"DatabaseTest\SecondExport\ToBeExported\ExpectedAdventureWorks.zip");
                 foreach (var entry in zipArchive.Entries)

@@ -5,7 +5,7 @@
     <TargetFrameworks>net47;netcoreapp3.1</TargetFrameworks>
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.0.8-pre</Version>
+    <Version>0.0.9-pre</Version>
     <Authors>Atsushi Nakamura</Authors>
     <Company>Atsushi Nakamura</Company>
     <Copyright>Copyright nuits.jp</Copyright>

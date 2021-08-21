@@ -84,7 +84,11 @@ namespace DbAssertions
         {
             if (_columnOperator is IgnoreColumnOperator)
             {
-                return ColumnOperators.Ignore.ToExpected(this, rowNumber, firstCell, secondCell);
+                return _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
+            }
+            if (_columnOperator is HostNameColumnOperator)
+            {
+                return _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
             }
 
             if (Equals(firstCell, secondCell))

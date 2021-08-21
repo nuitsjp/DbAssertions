@@ -117,6 +117,27 @@ namespace DbAssertions.Test
                     .Should().Be("TimeAfterStart");
             }
 
+            [Fact] public void When_operator_is_HostName_and_value_is_host_name_Should_return_Label()
+            {
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.DateTime,
+                        true,
+                        1,
+                        new HostNameColumnOperator());
+                int rowNumber = 1;
+                var firstCell = Dns.GetHostName();
+                var secondCell = Dns.GetHostName();
+                var initializedDateTime = DateTime.Parse("1999/12/31");
+
+                column.ToExpected(firstCell, secondCell, rowNumber, initializedDateTime)
+                    .Should().Be(HostNameColumnOperator.DefaultLabel);
+            }
+
             [Fact]
             public void When_operator_is_ignore_Should_return_Ignore()
             {
