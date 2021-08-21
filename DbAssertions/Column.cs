@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Linq;
 
 namespace DbAssertions
@@ -81,6 +82,11 @@ namespace DbAssertions
         /// <returns></returns>
         internal string ToExpected(string firstCell, string secondCell, int rowNumber, DateTime initializedDateTime)
         {
+            if (_columnOperator is IgnoreColumnOperator)
+            {
+                return ColumnOperators.Ignore.ToExpected(this, rowNumber, firstCell, secondCell);
+            }
+
             if (Equals(firstCell, secondCell))
             {
                 return firstCell;
@@ -113,6 +119,11 @@ namespace DbAssertions
         /// <returns></returns>
         internal bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
         {
+            if (ColumnOperators.TryGetColumnOperator(expectedCell, out var columnOperator))
+            {
+                return columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
+            }
+
             if (Equals(expectedCell, actualCell))
             {
                 return true;

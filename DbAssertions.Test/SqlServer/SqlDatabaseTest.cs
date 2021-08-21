@@ -22,6 +22,7 @@ namespace DbAssertions.Test.SqlServer
             Config = new DbAssertionsConfig();
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
+            Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperators.Ignore);
         }
 
         [Collection(nameof(SqlDatabaseTest))]

@@ -18,6 +18,14 @@ set
 where
 	BusinessEntityID = 1
 
+-- Ignore
+update
+	[AdventureWorks].[Person].[Person]
+set
+	FirstName = 'ig'
+where
+	BusinessEntityID = 1
+
 -- RunTime
 update
 	[AdventureWorks].[Person].[Person]

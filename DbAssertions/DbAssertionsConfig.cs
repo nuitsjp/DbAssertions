@@ -54,6 +54,7 @@ namespace DbAssertions
                     {
                         "HostName" => ColumnOperators.HostName,
                         "Random" => ColumnOperators.Random,
+                        "Ignore" => ColumnOperators.Ignore,
                         _ => throw new DbAssertionsException($"ColumnOperator {columnOperatorCondition.ColumnOperator} does not exist.")
                     });
             }

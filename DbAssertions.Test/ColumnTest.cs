@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -115,6 +116,28 @@ namespace DbAssertions.Test
                 column.ToExpected(firstCell, secondCell, rowNumber, initializedDateTime)
                     .Should().Be("TimeAfterStart");
             }
+
+            [Fact]
+            public void When_operator_is_ignore_Should_return_Ignore()
+            {
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.DateTime,
+                        true,
+                        1,
+                        new IgnoreColumnOperator());
+                int rowNumber = 1;
+                var firstCell = "foo";
+                var secondCell = "foo";
+                var initializedDateTime = DateTime.Parse("1999/12/31");
+
+                column.ToExpected(firstCell, secondCell, rowNumber, initializedDateTime)
+                    .Should().Be(IgnoreColumnOperator.DefaultLabel);
+            }
         }
 
         public class Compare
@@ -211,6 +234,81 @@ namespace DbAssertions.Test
                         columnOperator.Object);
                 var expectedCell = "TimeAfterStart";
                 var actualCell = "2000/01/02";
+                var timeBeforeStart = DateTime.Parse("2000/01/01");
+                columnOperator
+                    .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))
+                    .Throws(new AssertionFailedException(string.Empty));
+
+                column.Compare(expectedCell, actualCell, timeBeforeStart)
+                    .Should().Be(true);
+            }
+
+            [Fact]
+            public void When_expected_is_Ignore_Should_return_true()
+            {
+                var columnOperator = new Mock<IColumnOperator>();
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.DateTime,
+                        true,
+                        1,
+                        columnOperator.Object);
+                var expectedCell = IgnoreColumnOperator.DefaultLabel;
+                var actualCell = "foo";
+                var timeBeforeStart = DateTime.Parse("2000/01/01");
+                columnOperator
+                    .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))
+                    .Throws(new AssertionFailedException(string.Empty));
+
+                column.Compare(expectedCell, actualCell, timeBeforeStart)
+                    .Should().Be(true);
+            }
+
+            [Fact]
+            public void When_expected_is_Random_Should_return_true()
+            {
+                var columnOperator = new Mock<IColumnOperator>();
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.DateTime,
+                        true,
+                        1,
+                        columnOperator.Object);
+                var expectedCell = RandomColumnOperator.DefaultLabel;
+                var actualCell = "foo";
+                var timeBeforeStart = DateTime.Parse("2000/01/01");
+                columnOperator
+                    .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))
+                    .Throws(new AssertionFailedException(string.Empty));
+
+                column.Compare(expectedCell, actualCell, timeBeforeStart)
+                    .Should().Be(true);
+            }
+
+            [Fact]
+            public void When_expected_is_HostName_Should_return_true()
+            {
+                var columnOperator = new Mock<IColumnOperator>();
+                var column =
+                    new Column(
+                        "database",
+                        "schema",
+                        "table",
+                        "column",
+                        ColumnType.DateTime,
+                        true,
+                        1,
+                        columnOperator.Object);
+                var expectedCell = HostNameColumnOperator.DefaultLabel;
+                var actualCell = Dns.GetHostName();
                 var timeBeforeStart = DateTime.Parse("2000/01/01");
                 columnOperator
                     .Setup(x => x.Compare(expectedCell, actualCell, timeBeforeStart))

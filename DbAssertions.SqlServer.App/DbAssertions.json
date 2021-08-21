@@ -15,22 +15,6 @@
 			"ColumnName": "FirstName",
 			"ColumnType": "",
 			"ColumnOperator": "Random"
-		},
-		{
-			"DatabaseName": "",
-			"SchemaName": "",
-			"TableName": "Person",
-			"ColumnName": "ModifiedDate",
-			"ColumnType": "",
-			"ColumnOperator": "RunTime"
-		},
-		{
-			"DatabaseName": "",
-			"SchemaName": "",
-			"TableName": "Employee",
-			"ColumnName": "ModifiedDate",
-			"ColumnType": "",
-			"ColumnOperator": "SetupTime"
 		}
 	]
 }

@@ -2,7 +2,7 @@
   "profiles": {
     "DbAssertions.SqlServer.App": {
       "commandName": "Project",
-      "commandLineArgs": "second -s \"localhost, 1444\" -d AdventureWorks -u sa -p \"P@ssw0rd!\" -i \"2000/2/2\""
+      "commandLineArgs": "second -s \"localhost\" -d DFS -u sa -p \"&6yhNmju7\" -i \"2021/08/17 05:32:51\""
     }
   }
 }
