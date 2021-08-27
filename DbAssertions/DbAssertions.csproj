@@ -5,7 +5,7 @@
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.10-pre</Version>
+    <Version>0.0.11-pre</Version>
     <Authors>Atsushi Nakamura</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright nuits.jp</Copyright>
@@ -16,15 +16,16 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
+    <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="SharpZipLib" Version="0.86.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="CsvHelper" Version="27.1.1" />
     <PackageReference Include="SharpZipLib" Version="1.3.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="2.16.3" />
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>

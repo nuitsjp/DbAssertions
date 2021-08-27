@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using CsvHelper;
+using CsvHelper.Configuration;
 
 namespace DbAssertions
 {
@@ -20,7 +22,11 @@ namespace DbAssertions
 
         public IRow[] ReadAllRows(StreamReader streamReader)
         {
+#if NET40
             using var firstCsv = new CsvReader(streamReader) { Configuration = { HasHeaderRecord = false } };
+#else
+            using var firstCsv = new CsvReader(streamReader, CultureInfo.InvariantCulture);
+#endif
 
             return firstCsv
                 .GetRecords<dynamic>()

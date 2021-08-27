@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace DbAssertions
@@ -101,7 +102,14 @@ namespace DbAssertions
                 var secondTableFile = Export(table, secondDirectoryInfo);
 
                 // テキストが不一致の場合、実行ごとに変化のあるセルに対応しつつ期待結果ファイルを作成する
-                using var expectedCsv = new CsvWriter(new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)));
+#if NET40
+                using var expectedCsv = new CsvWriter(
+                    new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)));
+#else
+                using var expectedCsv = new CsvWriter(
+                    new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)),
+                    CultureInfo.InvariantCulture);
+#endif
 
                 // 1回目と2回目の全CSV行を読み込む
                 ITableReader tableReader = new TableReader(table.Columns);
@@ -180,7 +188,7 @@ namespace DbAssertions
                 var table = tables.SingleOrDefault(x => x.SchemaName == schemaName && x.TableName == tableName);
                 if (table == null)
                 {
-                    compareResult.AddMismatchedMessage($@"期待値の設定されているテーブル [{schemaName}].[{table}] がデータベースに存在しませんでした。");
+                    compareResult.AddMismatchedMessage($@"期待値の設定されているテーブル [{schemaName}].[{tableName}] がデータベースに存在しませんでした。");
                     return;
                 }
                 var actualTableFile = Export(table, directoryInfo);
