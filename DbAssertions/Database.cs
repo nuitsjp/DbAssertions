@@ -177,7 +177,12 @@ namespace DbAssertions
             {
                 var schemaName = zipEntry.GetSchemaName();
                 var tableName = zipEntry.GetTableName();
-                var table = tables.Single(x => x.SchemaName == schemaName && x.TableName == tableName);
+                var table = tables.SingleOrDefault(x => x.SchemaName == schemaName && x.TableName == tableName);
+                if (table == null)
+                {
+                    compareResult.AddMismatchedMessage($@"期待値の設定されているテーブル [{schemaName}].[{table}] がデータベースに存在しませんでした。");
+                    return;
+                }
                 var actualTableFile = Export(table, directoryInfo);
                 
                 var tableReader = new TableReader(table.Columns);
