@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-#if NET40
+#if NET40_OR_GREATER
 using System.Data.SqlClient;
 #else
 using Microsoft.Data.SqlClient;

@@ -1,5 +1,8 @@
 ﻿using System;
+#if NET40
+#else
 using System.Globalization;
+#endif
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -45,6 +48,10 @@ namespace DbAssertions
                     using var sha256 = SHA256.Create();
                     var hash = sha256.ComputeHash((byte[])value);
                     _csvWriter.WriteField(string.Concat(hash.Select(b => $"{b:x2}")));
+                }
+                else if (column.ColumnType == ColumnType.DateTime)
+                {
+                    _csvWriter.WriteField(((DateTime)value).ToString("yyyy/MM/dd H:mm:ss"));
                 }
                 else
                 {

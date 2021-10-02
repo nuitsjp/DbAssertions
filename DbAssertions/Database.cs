@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using CsvHelper.Configuration;
 using ICSharpCode.SharpZipLib.Zip;
 
 namespace DbAssertions

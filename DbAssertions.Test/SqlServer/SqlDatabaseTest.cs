@@ -1,5 +1,9 @@
 ﻿using System;
+#if NET5_0_OR_GREATER
+using Microsoft.Data.SqlClient;
+#else
 using System.Data.SqlClient;
+#endif
 using System.IO;
 using System.IO.Compression;
 using System.Net;
