@@ -101,14 +101,9 @@ namespace DbAssertions
                 var secondTableFile = Export(table, secondDirectoryInfo);
 
                 // テキストが不一致の場合、実行ごとに変化のあるセルに対応しつつ期待結果ファイルを作成する
-#if NET40
-                using var expectedCsv = new CsvWriter(
-                    new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)));
-#else
                 using var expectedCsv = new CsvWriter(
                     new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)),
                     CultureInfo.InvariantCulture);
-#endif
 
                 // 1回目と2回目の全CSV行を読み込む
                 ITableReader tableReader = new TableReader(table.Columns);

@@ -1,8 +1,5 @@
 ﻿using System;
-#if NET40
-#else
 using System.Globalization;
-#endif
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -20,11 +17,7 @@ namespace DbAssertions
             _table = table;
             FileInfo = directoryInfo.GetFile($"{table}.csv");
 
-#if NET40
-            _csvWriter = new CsvWriter(new StreamWriter(FileInfo.Open(FileMode.Create)));
-#else
             _csvWriter = new CsvWriter(new StreamWriter(FileInfo.Open(FileMode.Create)), CultureInfo.InvariantCulture);
-#endif
         }
 
         public void Dispose()

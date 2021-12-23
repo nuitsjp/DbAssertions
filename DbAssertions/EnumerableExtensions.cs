@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-#if NET40
-#else
-
-#endif
 
 namespace DbAssertions
 {

@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
-
-#if NET40
-#else
 using System.Globalization;
-#endif
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,18 +21,8 @@ namespace DbAssertions
 
         public IRow[] ReadAllRows(StreamReader streamReader)
         {
-#if NET40
-            using var firstCsv = new CsvReader(streamReader) { Configuration = { HasHeaderRecord = false } };
-            return firstCsv
-                .GetRecords<dynamic>()
-                .Select(x => new CsvRow(x, _columns))
-                .Cast<IRow>()
-                .ToArray();
-#else
             using var firstCsv = new CsvReader(streamReader, CultureInfo.InvariantCulture);
             return ReadAllRows(firstCsv).ToArray();
-#endif
-
         }
 
         private IEnumerable<IRow> ReadAllRows(CsvReader csvReader)

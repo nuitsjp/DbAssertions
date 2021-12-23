@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net47;netcoreapp3.1</TargetFrameworks>
-    <LangVersion>9</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Version>0.0.14-pre</Version>
     <Authors>Atsushi Nakamura</Authors>
