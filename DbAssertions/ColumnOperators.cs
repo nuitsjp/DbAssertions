@@ -12,12 +12,12 @@ namespace DbAssertions
         {
             if (Equals(label, HostNameColumnOperator.DefaultLabel))
             {
-                columnOperator = Ignore;
+                columnOperator = HostName;
                 return true;
             }
             if (Equals(label, RandomColumnOperator.DefaultLabel))
             {
-                columnOperator = Ignore;
+                columnOperator = Random;
                 return true;
             }
             if (Equals(label, IgnoreColumnOperator.DefaultLabel))

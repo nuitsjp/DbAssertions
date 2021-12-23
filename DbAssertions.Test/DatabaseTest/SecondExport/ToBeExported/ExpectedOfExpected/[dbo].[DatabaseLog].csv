@@ -891,6 +891,7 @@ CREATE SCHEMA [Sales] AUTHORIZATION [dbo];
             &lt;/xsd:sequence&gt;
         &lt;/xsd:complexType&gt;
     &lt;/xsd:element&gt;
+
 &lt;/xsd:schema&gt;';
 
 </CommandText></TSQLCommand></EVENT_INSTANCE>"
@@ -1844,6 +1845,7 @@ CREATE SCHEMA [Sales] AUTHORIZATION [dbo];
     [SellStartDate] [datetime] NOT NULL,
     [SellEndDate] [datetime] NULL,
     [DiscontinuedDate] [datetime] NULL,
+
     [rowguid] uniqueidentifier ROWGUIDCOL NOT NULL CONSTRAINT [DF_Product_rowguid] DEFAULT (NEWID()), 
     [ModifiedDate] [datetime] NOT NULL CONSTRAINT [DF_Product_ModifiedDate] DEFAULT (GETDATE()),
     CONSTRAINT [CK_Product_SafetyStockLevel] CHECK ([SafetyStockLevel] &gt; 0),
@@ -5030,6 +5032,7 @@ BEGIN
         BEGIN
             ROLLBACK TRANSACTION;
         END
+
 
         EXECUTE [dbo].[uspLogError];
     END CATCH;
