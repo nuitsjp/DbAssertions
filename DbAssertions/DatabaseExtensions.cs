@@ -13,21 +13,10 @@ namespace DbAssertions
 
     public class DatabaseAssertions : ReferenceTypeAssertions<Database, DatabaseAssertions>
     {
-        public DatabaseAssertions(Database instance)
+        public DatabaseAssertions(Database instance) : base(instance)
         {
-            Subject = instance;
         }
 
-        protected override string Context => "database";
-
-        //public AndConstraint<DatabaseAssertions> BeExpected(
-        //    DirectoryInfo expected,
-        //    bool ignoreNumbersInFileName = false,
-        //    string because = "",
-        //    params object[] becauseArgs)
-        //{
-        //    HasSameFiles(Subject, expected, ignoreNumbersInFileName, because, becauseArgs);
-        //    return new AndConstraint<DatabaseAssertions>(this);
-        //}
+        protected override string Identifier => "database";
     }
 }

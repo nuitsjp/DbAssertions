@@ -14,13 +14,11 @@ namespace DbAssertions.Test
         /// インスタンスを生成する
         /// </summary>
         /// <param name="instance"></param>
-        public FileInfoAssertions(FileInfo instance)
+        public FileInfoAssertions(FileInfo instance) : base(instance)
         {
-            Subject = instance;
         }
 
-
-        protected override string Context => "file";
+        protected override string Identifier => "file";
 
         /// <summary>
         /// ファイルが期待値と一致するかどうか判定する

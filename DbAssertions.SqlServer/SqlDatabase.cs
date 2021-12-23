@@ -8,11 +8,30 @@ namespace DbAssertions.SqlServer
 {
     public class SqlDatabase : Database
     {
-        public SqlDatabase(string server, string databaseName, string userId, string password) : base(databaseName)
+        [Obsolete("SqlDatabase(string connectionString)を利用してください。")]
+        public SqlDatabase(string server, string databaseName, string userId, string password)
         {
             Server = server;
+            DatabaseName = databaseName;
             UserId = userId;
             Password = password;
+            ConnectionString = new SqlConnectionStringBuilder
+            {
+                DataSource = server,
+                UserID = userId,
+                Password = password,
+                InitialCatalog = databaseName
+            }.ToString();
+        }
+
+        public SqlDatabase(string connectionString)
+        {
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            Server = builder.DataSource;
+            UserId = builder.UserID;
+            Password = builder.Password;
+            DatabaseName = builder.InitialCatalog;
+            ConnectionString = connectionString;
         }
 
         /// <summary>
@@ -30,16 +49,12 @@ namespace DbAssertions.SqlServer
         /// </summary>
         public string Password { get; }
 
+        public override string DatabaseName { get; }
+
         /// <summary>
         /// 接続文字列を取得する
         /// </summary>
-        private string ConnectionString => new SqlConnectionStringBuilder
-        {
-            DataSource = Server,
-            UserID = UserId,
-            Password = Password,
-            InitialCatalog = DatabaseName
-        }.ToString();
+        public override string ConnectionString { get; }
 
         public override IDbConnection OpenConnection()
         {

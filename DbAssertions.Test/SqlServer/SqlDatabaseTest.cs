@@ -14,7 +14,14 @@ namespace DbAssertions.Test.SqlServer
     {
         private static readonly DateTime TimeBeforeStart = DateTime.Parse("2000/02/02");
 
-        protected readonly SqlDatabase Database = new ("localhost, 1444", "AdventureWorks", "sa", "P@ssw0rd!");
+        protected readonly SqlDatabase Database = new (new SqlConnectionStringBuilder
+        {
+            DataSource = "localhost, 1444", 
+            InitialCatalog = "AdventureWorks",
+            UserID = "sa", 
+            Password = "P@ssw0rd!",
+            Encrypt = false
+        }.ToString());
         protected readonly DbAssertionsConfig Config;
 
         public SqlDatabaseTest()
@@ -114,14 +121,7 @@ namespace DbAssertions.Test.SqlServer
 
         private void ExecuteNonQuery(string sqlFile)
         {
-            var connectionString = new SqlConnectionStringBuilder
-            {
-                DataSource = Database.Server,
-                InitialCatalog = Database.DatabaseName,
-                UserID = Database.UserId,
-                Password = Database.Password
-            }.ToString();
-            using var connection = new SqlConnection(connectionString);
+            using var connection = new SqlConnection(Database.ConnectionString);
             connection.Open();
             connection.Execute(File.ReadAllText(sqlFile).Replace("%HostName%", Dns.GetHostName()));
         }

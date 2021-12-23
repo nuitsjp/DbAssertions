@@ -1,4 +1,9 @@
 ﻿using System;
+#if NETFRAMEWORK
+using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
+#endif
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -28,7 +33,16 @@ namespace DbAssertions.SqlServer.App
             [Option("p", "パスワード")] string password,
             [Option("o", "エクスポートディレクトリ")] string output = "output")
         {
-            new SqlDatabase(server, database, userId, password).FirstExport(new DirectoryInfo(output));
+
+            new SqlDatabase(
+                new SqlConnectionStringBuilder
+                {
+                    DataSource = server,
+                    UserID = userId,
+                    Password = password,
+                    InitialCatalog = database,
+                    Encrypt = false
+                }.ToString()).FirstExport(new DirectoryInfo(output));
         }
 
         /// <summary>
@@ -49,11 +63,27 @@ namespace DbAssertions.SqlServer.App
             if (File.Exists(configPath))
             {
                 var config = DbAssertionsConfig.Deserialize(configPath);
-                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime), config);
+                new SqlDatabase(
+                    new SqlConnectionStringBuilder
+                    {
+                        DataSource = server,
+                        UserID = userId,
+                        Password = password,
+                        InitialCatalog = database,
+                        Encrypt = false
+                    }.ToString()).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime), config);
             }
             else
             {
-                new SqlDatabase(server, database, userId, password).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime));
+                new SqlDatabase(
+                    new SqlConnectionStringBuilder
+                    {
+                        DataSource = server,
+                        UserID = userId,
+                        Password = password,
+                        InitialCatalog = database,
+                        Encrypt = false
+                    }.ToString()).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime));
             }
         }
     }

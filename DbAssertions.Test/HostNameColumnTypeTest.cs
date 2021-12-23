@@ -32,8 +32,7 @@ namespace DbAssertions.Test
             public void Where_first_not_equal_second_Should_thrown_exception()
             {
                 Subject.Invoking(x => x.ToExpected(_column, 1, "foo", "bar"))
-                    .ShouldThrow<DbAssertionsException>();
-
+                    .Should().Throw<DbAssertionsException>();
             }
         }
 

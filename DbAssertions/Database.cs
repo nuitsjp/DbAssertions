@@ -19,16 +19,12 @@ namespace DbAssertions
         /// <summary>
         /// データベース
         /// </summary>
-        public string DatabaseName { get; }
+        public abstract string DatabaseName { get; }
 
         /// <summary>
-        /// インスタンスを初期化する
+        /// データベース接続文字列
         /// </summary>
-        /// <param name="databaseName"></param>
-        protected Database(string databaseName)
-        {
-            DatabaseName = databaseName;
-        }
+        public abstract string ConnectionString { get; }
 
         public abstract IDbConnection OpenConnection();
 

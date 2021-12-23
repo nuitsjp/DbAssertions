@@ -15,12 +15,11 @@ namespace DbAssertions.Test
         /// インスタンスを生成する
         /// </summary>
         /// <param name="instance"></param>
-        public DirectoryInfoAssertions(DirectoryInfo instance)
+        public DirectoryInfoAssertions(DirectoryInfo instance) : base(instance)
         {
-            Subject = instance;
         }
 
-        protected override string Context => "directory";
+        protected override string Identifier => "directory";
 
         /// <summary>
         /// 比較対象のディレクトリが同じコンテンツを保持しているかどうか評価する
