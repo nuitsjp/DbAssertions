@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net47;net6</TargetFrameworks>
+    <TargetFrameworks>net461;net6</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.0.15-pre</Version>
+    <Version>0.0.17-pre</Version>
     <Authors>Atsushi Nakamura</Authors>
     <Company>Atsushi Nakamura</Company>
     <Copyright>Copyright nuits.jp</Copyright>
@@ -17,7 +17,7 @@
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net47'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
     <PackageReference Include="Microsoft.SqlServer.Types" Version="14.0.1016.290" />
   </ItemGroup>
 

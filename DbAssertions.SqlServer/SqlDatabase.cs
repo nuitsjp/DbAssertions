@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+#if NETSTANDARD2_0
 using Microsoft.Data.SqlClient;
+#else
+using System.Data.SqlClient;
+#endif
 
 namespace DbAssertions.SqlServer
 {

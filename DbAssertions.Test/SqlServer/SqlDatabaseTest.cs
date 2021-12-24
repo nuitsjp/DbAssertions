@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
+using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -97,8 +97,8 @@ namespace DbAssertions.Test.SqlServer
                     Config,
                     workDirectory);
 
-                compareResult.HasMismatched
-                    .Should().BeFalse();
+                compareResult
+                    .HasMismatched.Should().BeFalse();
             }
 
             [Fact]
@@ -114,8 +114,8 @@ namespace DbAssertions.Test.SqlServer
                     Config,
                     workDirectory);
 
-                compareResult.HasMismatched
-                    .Should().BeTrue();
+                compareResult
+                    .HasMismatched.Should().BeTrue();
             }
         }
 
