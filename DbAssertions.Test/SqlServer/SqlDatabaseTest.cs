@@ -121,9 +121,17 @@ namespace DbAssertions.Test.SqlServer
 
         private void ExecuteNonQuery(string sqlFile)
         {
+            var hostName = Dns.GetHostName();
+            const int SuffixColumnLength = 10;
+            if (SuffixColumnLength < hostName.Length)
+            {
+                hostName = hostName.Substring(0, SuffixColumnLength);
+            }
+            var query = File.ReadAllText(sqlFile).Replace("%HostName%", hostName);
+
             using var connection = new SqlConnection(Database.ConnectionString);
             connection.Open();
-            connection.Execute(File.ReadAllText(sqlFile).Replace("%HostName%", Dns.GetHostName()));
+            connection.Execute(query);
         }
     }
 
