@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-    <PackageReference Include="Microsoft.SqlServer.Types" Version="14.0.1016.290" />
+	  <PackageReference Include="Microsoft.SqlServer.Types" Version="10.50.1600.1" />
   </ItemGroup>
 
   <ItemGroup>

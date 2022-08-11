@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using DbAssertions.Test.SqlServer;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;
@@ -9,6 +10,7 @@ namespace DbAssertions.Test
 {
     public class ColumnTest
     {
+        [Collection(nameof(SqlDatabaseTest))]
         public class ToExpected
         {
             [Fact]
@@ -161,6 +163,7 @@ namespace DbAssertions.Test
             }
         }
 
+        [Collection(nameof(SqlDatabaseTest))]
         public class Compare
         {
             [Fact]

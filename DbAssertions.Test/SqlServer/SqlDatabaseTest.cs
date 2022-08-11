@@ -10,9 +10,11 @@ using Xunit;
 
 namespace DbAssertions.Test.SqlServer
 {
-    public class SqlDatabaseTest
+    public class SqlDatabaseTest : IDisposable
     {
         private static readonly DateTime TimeBeforeStart = DateTime.Parse("2000/02/02");
+
+        private static readonly string HostName = "ZRFG050111";
 
         protected readonly SqlDatabase Database = new (new SqlConnectionStringBuilder
         {
@@ -30,6 +32,17 @@ namespace DbAssertions.Test.SqlServer
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
             Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperators.Ignore);
+            HostNameColumnOperator.HostNameProvider = new HostNameProviderStub();
+        }
+
+        public void Dispose()
+        {
+            HostNameColumnOperator.HostNameProvider = new HostNameProvider();
+        }
+
+        public class HostNameProviderStub : IHostNameProvider
+        {
+            public string GetHostName() => HostName;
         }
 
         [Collection(nameof(SqlDatabaseTest))]
@@ -121,13 +134,7 @@ namespace DbAssertions.Test.SqlServer
 
         private void ExecuteNonQuery(string sqlFile)
         {
-            var hostName = Dns.GetHostName();
-            const int SuffixColumnLength = 10;
-            if (SuffixColumnLength < hostName.Length)
-            {
-                hostName = hostName.Substring(0, SuffixColumnLength);
-            }
-            var query = File.ReadAllText(sqlFile).Replace("%HostName%", hostName);
+            var query = File.ReadAllText(sqlFile).Replace("%HostName%", HostName);
 
             using var connection = new SqlConnection(Database.ConnectionString);
             connection.Open();
