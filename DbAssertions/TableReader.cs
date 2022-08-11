@@ -16,7 +16,11 @@ namespace DbAssertions
             _columns = columns;
         }
 
-        public IRow[] ReadAllRows(FileInfo fileInfo) => ReadAllRows(new StreamReader(fileInfo.OpenRead(), Encoding.UTF8));
+        public IRow[] ReadAllRows(FileInfo fileInfo)
+        {
+            using var streamReader = new StreamReader(fileInfo.OpenRead(), Encoding.UTF8);
+            return ReadAllRows(streamReader);
+        }
 
 
         public IRow[] ReadAllRows(StreamReader streamReader)

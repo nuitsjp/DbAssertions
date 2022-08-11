@@ -152,7 +152,7 @@ namespace DbAssertions
         /// <param name="because"></param>
         /// <param name="becauseArgs"></param>
         public CompareResult Compare(
-            FileInfo expectedFileInfo,
+            DirectoryInfo expectedFileInfo,
             DateTime setupCompletionTime,
             IDbAssertionsConfig config,
             DirectoryInfo directoryInfo,
@@ -161,20 +161,16 @@ namespace DbAssertions
         {
             var tables = GetTables(config);
 
-            // 期待結果zipファイルを展開する
-            using var compressStreamA = expectedFileInfo.OpenRead();
-            using var zipFile = new ZipFile(compressStreamA);
-
             // データをExportしたときに文字列化する。その際の精度の問題で開始時刻より、実施時刻が前になることがある
             // 一旦この形で対応する
             var timeBeforeStart = DateTime.Parse(setupCompletionTime.ToString(CultureInfo.InvariantCulture));
 
             CompareResult compareResult = new();
             // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
-            Parallel.ForEach(zipFile.GetZipEntries(), zipEntry =>
+            Parallel.ForEach(expectedFileInfo.GetFiles(), tableFile =>
             {
-                var schemaName = zipEntry.GetSchemaName();
-                var tableName = zipEntry.GetTableName();
+                var schemaName = tableFile.GetSchemaName();
+                var tableName = tableFile.GetTableName();
                 var table = tables.SingleOrDefault(x => x.SchemaName == schemaName && x.TableName == tableName);
                 if (table == null)
                 {
@@ -185,7 +181,7 @@ namespace DbAssertions
                 
                 var tableReader = new TableReader(table.Columns);
                 // ReSharper disable once AccessToDisposedClosure
-                var expectedRecords = tableReader.ReadAllRows(new StreamReader(zipFile.GetInputStream(zipEntry), Encoding.UTF8));
+                var expectedRecords = tableReader.ReadAllRows(tableFile);
                 var actualRecords = tableReader.ReadAllRows(actualTableFile);
                 if (expectedRecords.Length != actualRecords.Length)
                 {

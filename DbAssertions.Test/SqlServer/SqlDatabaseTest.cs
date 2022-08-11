@@ -105,7 +105,7 @@ namespace DbAssertions.Test.SqlServer
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
                 var compareResult = Database.Compare(
-                    new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
+                    new DirectoryInfo(@"DatabaseTest\Compare"),
                     TimeBeforeStart,
                     Config,
                     workDirectory);
@@ -122,7 +122,7 @@ namespace DbAssertions.Test.SqlServer
                 var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
 
                 var compareResult = Database.Compare(
-                    new FileInfo(@"DatabaseTest\Compare\ExpectedAdventureWorks.zip"),
+                    new DirectoryInfo(@"DatabaseTest\Compare"),
                     TimeBeforeStart,
                     Config,
                     workDirectory);
