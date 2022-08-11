@@ -4,10 +4,8 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace DbAssertions
 {
@@ -131,15 +129,6 @@ namespace DbAssertions
                     expectedCsv.NextRecord();
                 }
             });
-
-            // 期待結果をzipファイルに圧縮する
-            FastZip fastZip = new();
-            fastZip.CreateZip(
-                directoryInfo.GetFile($"Expected{DatabaseName}.zip").FullName,
-                expectedDirectoryInfo.FullName,
-                false,
-                null);
-
         }
 
         /// <summary>

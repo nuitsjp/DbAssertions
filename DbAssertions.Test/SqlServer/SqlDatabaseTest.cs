@@ -81,15 +81,11 @@ namespace DbAssertions.Test.SqlServer
 
                 Database.SecondExport(workDirectory, TimeBeforeStart, Config);
 
-                var zipArchive = ZipFile.OpenRead(
-                    @"DatabaseTest\SecondExport\ToBeExported\ExpectedAdventureWorks.zip");
-                foreach (var entry in zipArchive.Entries)
+                foreach (var tableFile in workDirectory.GetFiles())
                 {
-                    entry.ReadAllBytes()
-                        .Should().Equal(
-                            File.ReadAllBytes(Path.Combine(@"DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected",
-                                entry.Name)),
-                            entry.Name);
+                    var actual = File.ReadAllText(tableFile.FullName);
+                    var expected = File.ReadAllText(Path.Combine(@"DatabaseTest\SecondExport\ToBeExported\ExpectedOfExpected", tableFile.Name));
+                    actual.Should().Be(expected, tableFile.Name);
                 }
             }
         }
