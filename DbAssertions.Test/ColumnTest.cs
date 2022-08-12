@@ -26,7 +26,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = "foo";
                 var secondCell = firstCell;
@@ -53,7 +54,8 @@ namespace DbAssertions.Test
                         ColumnType.Other, 
                         true, 
                         1, 
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = "foo";
                 var secondCell = "bar";
@@ -80,7 +82,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = "2000/01/01";
                 var secondCell = "2000/01/02";
@@ -106,7 +109,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = "2000/01/01";
                 var secondCell = "2000/01/02";
@@ -130,7 +134,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        new HostNameColumnOperator());
+                        new HostNameColumnOperator(),
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = Dns.GetHostName();
                 var secondCell = Dns.GetHostName();
@@ -152,7 +157,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        new IgnoreColumnOperator());
+                        new IgnoreColumnOperator(),
+                        ColumnOperatorProvider.Default);
                 int rowNumber = 1;
                 var firstCell = "foo";
                 var secondCell = "foo";
@@ -179,7 +185,8 @@ namespace DbAssertions.Test
                         ColumnType.Other,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = "foo";
                 var actualCell = expectedCell;
                 var timeBeforeStart = DateTime.Parse("2000/01/02");
@@ -204,7 +211,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = "2000/01/01";
                 var actualCell = "2000/01/02";
                 var result = true;
@@ -230,7 +238,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = "TimeBeforeStart";
                 var actualCell = "2000/01/01";
                 var timeBeforeStart = DateTime.Parse("2000/01/02");
@@ -255,7 +264,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = "TimeAfterStart";
                 var actualCell = "2000/01/02";
                 var timeBeforeStart = DateTime.Parse("2000/01/01");
@@ -280,7 +290,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = IgnoreColumnOperator.DefaultLabel;
                 var actualCell = "foo";
                 var timeBeforeStart = DateTime.Parse("2000/01/01");
@@ -305,7 +316,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = RandomColumnOperator.DefaultLabel;
                 var actualCell = "foo";
                 var timeBeforeStart = DateTime.Parse("2000/01/01");
@@ -330,7 +342,8 @@ namespace DbAssertions.Test
                         ColumnType.DateTime,
                         true,
                         1,
-                        columnOperator.Object);
+                        columnOperator.Object,
+                        ColumnOperatorProvider.Default);
                 var expectedCell = HostNameColumnOperator.DefaultLabel;
                 var actualCell = Dns.GetHostName();
                 var timeBeforeStart = DateTime.Parse("2000/01/01");

@@ -18,6 +18,7 @@ namespace DbAssertions
         internal const string TimeAfterStart = "TimeAfterStart";
 
         private readonly IColumnOperator _columnOperator;
+        private readonly IColumnOperatorProvider _columnOperatorProvider;
 
         /// <summary>
         /// インスタンスを生成する。
@@ -30,7 +31,17 @@ namespace DbAssertions
         /// <param name="isPrimaryKey"></param>
         /// <param name="primaryKeyOrdinal"></param>
         /// <param name="columnOperator"></param>
-        public Column(string databaseName, string schemaName, string tableName, string columnName, ColumnType columnType, bool isPrimaryKey, int primaryKeyOrdinal, IColumnOperator columnOperator)
+        /// <param name="columnOperatorProvider"></param>
+        public Column(
+            string databaseName, 
+            string schemaName, 
+            string tableName, 
+            string columnName, 
+            ColumnType columnType, 
+            bool isPrimaryKey, 
+            int primaryKeyOrdinal, 
+            IColumnOperator columnOperator, 
+            IColumnOperatorProvider columnOperatorProvider)
         {
             TableName = tableName;
             ColumnName = columnName;
@@ -38,6 +49,7 @@ namespace DbAssertions
             IsPrimaryKey = isPrimaryKey;
             PrimaryKeyOrdinal = primaryKeyOrdinal;
             _columnOperator = columnOperator;
+            _columnOperatorProvider = columnOperatorProvider;
             DatabaseName = databaseName;
             SchemaName = schemaName;
         }
@@ -122,7 +134,7 @@ namespace DbAssertions
         /// <returns></returns>
         internal bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
         {
-            if (ColumnOperators.TryGetColumnOperator(expectedCell, out var columnOperator))
+            if (_columnOperatorProvider.TryGetColumnOperator(expectedCell, out var columnOperator))
             {
                 return columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
             }

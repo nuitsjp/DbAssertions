@@ -12,23 +12,9 @@ namespace DbAssertions.SqlServer
 {
     public class SqlDatabase : Database
     {
-        [Obsolete("SqlDatabase(string connectionString)を利用してください。")]
-        public SqlDatabase(string server, string databaseName, string userId, string password)
-        {
-            Server = server;
-            DatabaseName = databaseName;
-            UserId = userId;
-            Password = password;
-            ConnectionString = new SqlConnectionStringBuilder
-            {
-                DataSource = server,
-                UserID = userId,
-                Password = password,
-                InitialCatalog = databaseName
-            }.ToString();
-        }
+        private readonly IColumnOperatorProvider _columnOperatorProvider;
 
-        public SqlDatabase(string connectionString)
+        public SqlDatabase(string connectionString, IColumnOperatorProvider columnOperatorProvider)
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
             Server = builder.DataSource;
@@ -36,6 +22,7 @@ namespace DbAssertions.SqlServer
             Password = builder.Password;
             DatabaseName = builder.InitialCatalog;
             ConnectionString = connectionString;
+            _columnOperatorProvider = columnOperatorProvider;
         }
 
         /// <summary>
@@ -177,7 +164,8 @@ order by
                         columnType,
                         Convert.ToBoolean(reader["IsPrimaryKey"]),
                         (int)reader["PrimaryKeyOrdinal"],
-                        columnOperator));
+                        columnOperator,
+                        _columnOperatorProvider));
             }
 
             return columns;

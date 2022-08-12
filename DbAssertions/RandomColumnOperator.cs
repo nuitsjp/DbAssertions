@@ -4,7 +4,7 @@ namespace DbAssertions
 {
     public class RandomColumnOperator : IColumnOperator
     {
-        public static readonly string DefaultLabel = "Random";
+        public const string DefaultLabel = "Random";
 
         public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {

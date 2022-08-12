@@ -52,9 +52,9 @@ namespace DbAssertions
                     GetColumnType((string)columnOperatorCondition.ColumnType),
                     (string)columnOperatorCondition.ColumnOperator switch
                     {
-                        "HostName" => ColumnOperators.HostName,
-                        "Random" => ColumnOperators.Random,
-                        "Ignore" => ColumnOperators.Ignore,
+                        HostNameColumnOperator.DefaultLabel => new HostNameColumnOperator(),
+                        RandomColumnOperator.DefaultLabel => new RandomColumnOperator(),
+                        IgnoreColumnOperator.DefaultLabel => new IgnoreColumnOperator(),
                         _ => throw new DbAssertionsException($"ColumnOperator {columnOperatorCondition.ColumnOperator} does not exist.")
                     });
             }

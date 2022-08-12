@@ -4,7 +4,7 @@ namespace DbAssertions
 {
     public class IgnoreColumnOperator : IColumnOperator
     {
-        public static readonly string DefaultLabel = "Ignore";
+        public const string DefaultLabel = "Ignore";
 
         public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
             => DefaultLabel;

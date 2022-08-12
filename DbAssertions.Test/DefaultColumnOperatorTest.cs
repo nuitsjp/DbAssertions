@@ -11,7 +11,16 @@ namespace DbAssertions.Test
         public class ToExpected : DefaultColumnOperatorTest
         {
             private readonly Column _column =
-                new("database", "schema", "table", "column", ColumnType.Other, false, 0, new DefaultColumnOperator());
+                new(
+                    "database", 
+                    "schema", 
+                    "table", 
+                    "column", 
+                    ColumnType.Other, 
+                    false, 
+                    0, 
+                    new DefaultColumnOperator(),
+                    ColumnOperatorProvider.Default);
 
             [Fact]
             public void When_first_equal_second_Should_return_first()

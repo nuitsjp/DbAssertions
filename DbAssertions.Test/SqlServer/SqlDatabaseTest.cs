@@ -28,21 +28,22 @@ namespace DbAssertions.Test.SqlServer
         public SqlDatabaseTest()
         {
             Config = new DbAssertionsConfig();
-            Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperators.HostName);
-            Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
-            Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperators.Ignore);
+            Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.HostName);
+            Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Random);
+            Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Ignore);
             HostNameColumnOperator.HostNameProvider = new HostNameProviderStub();
 
             _adventureWorks = AdventureWorks.Start();
 
-            Database = new(new SqlConnectionStringBuilder
-            {
-                DataSource = $"localhost, {_adventureWorks.Port}",
-                InitialCatalog = "AdventureWorks",
-                UserID = "sa",
-                Password = AdventureWorks.SaPassword,
-                Encrypt = false
-            }.ToString());
+            Database = new SqlDatabase(new SqlConnectionStringBuilder
+                {
+                    DataSource = $"localhost, {_adventureWorks.Port}",
+                    InitialCatalog = "AdventureWorks",
+                    UserID = "sa",
+                    Password = AdventureWorks.SaPassword,
+                    Encrypt = false
+                }.ToString(),
+                ColumnOperatorProvider.Default);
         }
 
         public void Dispose()

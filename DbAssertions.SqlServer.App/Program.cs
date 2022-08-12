@@ -42,7 +42,8 @@ namespace DbAssertions.SqlServer.App
                     Password = password,
                     InitialCatalog = database,
                     Encrypt = false
-                }.ToString()).FirstExport(new DirectoryInfo(output));
+                }.ToString(),
+                ColumnOperatorProvider.Default).FirstExport(new DirectoryInfo(output));
         }
 
         /// <summary>
@@ -71,7 +72,8 @@ namespace DbAssertions.SqlServer.App
                         Password = password,
                         InitialCatalog = database,
                         Encrypt = false
-                    }.ToString()).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime), config);
+                    }.ToString(),
+                    ColumnOperatorProvider.Default).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime), config);
             }
             else
             {
@@ -83,7 +85,8 @@ namespace DbAssertions.SqlServer.App
                         Password = password,
                         InitialCatalog = database,
                         Encrypt = false
-                    }.ToString()).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime));
+                    }.ToString(),
+                    ColumnOperatorProvider.Default).SecondExport(new DirectoryInfo(output), DateTime.Parse(initializedDateTime));
             }
         }
     }

@@ -5,7 +5,7 @@ namespace DbAssertions
 {
     public class HostNameColumnOperator : IColumnOperator
     {
-        public static readonly string DefaultLabel = "HostName";
+        public const string DefaultLabel = "HostName";
 
         internal static IHostNameProvider HostNameProvider { get; set; } = new HostNameProvider();
 
