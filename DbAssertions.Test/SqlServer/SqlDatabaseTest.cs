@@ -16,7 +16,7 @@ namespace DbAssertions.Test.SqlServer
     {
         private static readonly DateTime TimeBeforeStart = DateTime.Parse("2000/02/02");
 
-        private static readonly string HostName = "ZRFG050111";
+        private static readonly string HostName = "DummyHost";
 
         protected readonly SqlDatabase Database;
         protected readonly DbAssertionsConfig Config;
@@ -56,12 +56,12 @@ namespace DbAssertions.Test.SqlServer
             public string GetHostName() => HostName;
         }
 
-        public class FirstExport : SqlDatabaseTest
+        public class FirstShouldBeExported : SqlDatabaseTest
         {
             private readonly DirectoryInfo _first = new DirectoryInfo("FirstActual").ReCreate();
 
             [Fact]
-            public async Task ToBeExported()
+            public void Invoke()
             {
                 ExecuteNonQuery(@"DatabaseTest\First.sql");
                 Database.FirstExport(_first);
@@ -70,10 +70,10 @@ namespace DbAssertions.Test.SqlServer
             }
         }
 
-        public class SecondExport : SqlDatabaseTest
+        public class SecondShouldBeExported : SqlDatabaseTest
         {
             [Fact]
-            public void ToBeExported()
+            public void Invoke()
             {
                 ExecuteNonQuery(@"DatabaseTest\Second.sql");
 
@@ -99,14 +99,14 @@ namespace DbAssertions.Test.SqlServer
             }
         }
 
-        public class Compare : SqlDatabaseTest
+        public class CompareShouldBeMatches : SqlDatabaseTest
         {
             [Fact]
             public void Matches()
             {
                 ExecuteNonQuery(@"DatabaseTest\CompareMatches.sql");
 
-                var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
+                var workDirectory = new DirectoryInfo("CompareShouldBeMatches").ReCreate();
 
                 var compareResult = Database.Compare(
                     new DirectoryInfo(@"DatabaseTest\Compare"),
@@ -117,13 +117,16 @@ namespace DbAssertions.Test.SqlServer
                 compareResult
                     .HasMismatched.Should().BeFalse();
             }
+        }
 
+        public class CompareShouldBeUnmatches : SqlDatabaseTest
+        {
             [Fact]
             public void UnMatches()
             {
                 ExecuteNonQuery(@"DatabaseTest\CompareUnMatches.sql");
 
-                var workDirectory = new DirectoryInfo("WorkCompare").ReCreate();
+                var workDirectory = new DirectoryInfo("CompareShouldBeUnmatches").ReCreate();
 
                 var compareResult = Database.Compare(
                     new DirectoryInfo(@"DatabaseTest\Compare"),
@@ -144,6 +147,11 @@ namespace DbAssertions.Test.SqlServer
             connection.Execute(query);
         }
 
+        /// <summary>
+        /// Immediately after docker startup, connection errors occur. Therefore, retry processing is performed.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
         private IDbConnection OpenConnection(string connectionString)
         {
             IDbConnection? connection = null;
