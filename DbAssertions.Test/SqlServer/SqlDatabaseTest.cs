@@ -28,9 +28,9 @@ namespace DbAssertions.Test.SqlServer
         public SqlDatabaseTest()
         {
             Config = new DbAssertionsConfig();
-            Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.HostName);
-            Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Random);
-            Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Ignore);
+            Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.Default.HostName);
+            Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Default.Random);
+            Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Default.Ignore);
             HostNameColumnOperator.HostNameProvider = new HostNameProviderStub();
 
             _adventureWorks = AdventureWorks.Start();
@@ -103,7 +103,7 @@ namespace DbAssertions.Test.SqlServer
         public class CompareShouldBeMatches : SqlDatabaseTest
         {
             [Fact]
-            public void Matches()
+            public void Invoke()
             {
                 ExecuteNonQuery(@"DatabaseTest\CompareMatches.sql");
 
@@ -123,7 +123,7 @@ namespace DbAssertions.Test.SqlServer
         public class CompareShouldBeUnmatches : SqlDatabaseTest
         {
             [Fact]
-            public void UnMatches()
+            public void Invoke()
             {
                 ExecuteNonQuery(@"DatabaseTest\CompareUnMatches.sql");
 

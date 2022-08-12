@@ -4,10 +4,22 @@ namespace DbAssertions;
 
 public class ColumnOperatorProvider : IColumnOperatorProvider
 {
-    public static readonly IColumnOperatorProvider Default = new ColumnOperatorProvider();
-    public static readonly IColumnOperator HostName = new HostNameColumnOperator();
-    public static readonly IColumnOperator Random = new RandomColumnOperator();
-    public static readonly IColumnOperator Ignore = new IgnoreColumnOperator();
+    public static readonly IColumnOperatorProvider Default = 
+        new ColumnOperatorProvider(
+            new HostNameColumnOperator(),
+            new RandomColumnOperator(),
+            new IgnoreColumnOperator());
+
+    public ColumnOperatorProvider(IColumnOperator hostName, IColumnOperator random, IColumnOperator ignore)
+    {
+        HostName = hostName;
+        Random = random;
+        Ignore = ignore;
+    }
+
+    public IColumnOperator HostName { get; }
+    public IColumnOperator Random { get; }
+    public IColumnOperator Ignore { get; }
 
     public bool TryGetColumnOperator(string label, out IColumnOperator columnOperator)
     {
