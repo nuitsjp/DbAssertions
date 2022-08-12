@@ -19,10 +19,12 @@ namespace DbAssertions.Test
             return new (instance);
         }
 
-        public static void ReplaceContent(this FileInfo fileInfo, string oldValue, string newValue)
-        {
-            var content = File.ReadAllText(fileInfo.FullName, Utf8WithoutBom);
-            File.WriteAllText(fileInfo.FullName, content.Replace(oldValue, newValue), Utf8WithoutBom);
-        }
+        /// <summary>
+        /// ファイルの内容を
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
+        public static string ReadAllText(this FileInfo instance)
+            => File.ReadAllText(instance.FullName);
     }
 }

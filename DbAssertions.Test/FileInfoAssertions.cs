@@ -32,9 +32,9 @@ namespace DbAssertions.Test
             string because = "",
             params object[] becauseArgs)
         {
-            Subject.ReadAllBytes()
-                .Should().Equal(
-                    expected.ReadAllBytes(),
+            Subject.ReadAllText()
+                .Should().Be(
+                    expected.ReadAllText(),
                     "{0} と {1} のファイル内容が不一致です。",
                     Subject.FullName,
                     expected.FullName);
