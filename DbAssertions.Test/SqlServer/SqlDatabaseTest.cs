@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using DbAssertions.SqlServer;
 using FluentAssertions;
@@ -16,15 +18,12 @@ namespace DbAssertions.Test.SqlServer
 
         private static readonly string HostName = "ZRFG050111";
 
-        protected readonly SqlDatabase Database = new (new SqlConnectionStringBuilder
-        {
-            DataSource = "localhost, 1444", 
-            InitialCatalog = "AdventureWorks",
-            UserID = "sa", 
-            Password = "P@ssw0rd!",
-            Encrypt = false
-        }.ToString());
+        protected readonly SqlDatabase Database;
         protected readonly DbAssertionsConfig Config;
+
+        private readonly AdventureWorks _adventureWorks;
+
+
 
         public SqlDatabaseTest()
         {
@@ -33,11 +32,23 @@ namespace DbAssertions.Test.SqlServer
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperators.Random);
             Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperators.Ignore);
             HostNameColumnOperator.HostNameProvider = new HostNameProviderStub();
+
+            _adventureWorks = AdventureWorks.Start();
+
+            Database = new(new SqlConnectionStringBuilder
+            {
+                DataSource = $"localhost, {_adventureWorks.Port}",
+                InitialCatalog = "AdventureWorks",
+                UserID = "sa",
+                Password = AdventureWorks.SaPassword,
+                Encrypt = false
+            }.ToString());
         }
 
         public void Dispose()
         {
             HostNameColumnOperator.HostNameProvider = new HostNameProvider();
+            _adventureWorks.Dispose();
         }
 
         public class HostNameProviderStub : IHostNameProvider
@@ -45,13 +56,12 @@ namespace DbAssertions.Test.SqlServer
             public string GetHostName() => HostName;
         }
 
-        [Collection(nameof(SqlDatabaseTest))]
         public class FirstExport : SqlDatabaseTest
         {
             private readonly DirectoryInfo _first = new DirectoryInfo("FirstActual").ReCreate();
 
             [Fact]
-            public void ToBeExported()
+            public async Task ToBeExported()
             {
                 ExecuteNonQuery(@"DatabaseTest\First.sql");
                 Database.FirstExport(_first);
@@ -60,7 +70,6 @@ namespace DbAssertions.Test.SqlServer
             }
         }
 
-        [Collection(nameof(SqlDatabaseTest))]
         public class SecondExport : SqlDatabaseTest
         {
             [Fact]
@@ -90,7 +99,6 @@ namespace DbAssertions.Test.SqlServer
             }
         }
 
-        [Collection(nameof(SqlDatabaseTest))]
         public class Compare : SqlDatabaseTest
         {
             [Fact]
@@ -132,20 +140,31 @@ namespace DbAssertions.Test.SqlServer
         {
             var query = File.ReadAllText(sqlFile).Replace("%HostName%", HostName);
 
-            using var connection = new SqlConnection(Database.ConnectionString);
-            connection.Open();
+            using var connection = OpenConnection(Database.ConnectionString);
             connection.Execute(query);
         }
-    }
 
-    public static class ZipArchiveEntryExtensions
-    {
-        public static byte[] ReadAllBytes(this ZipArchiveEntry zipArchiveEntry)
+        private IDbConnection OpenConnection(string connectionString)
         {
-            using var stream = zipArchiveEntry.Open();
-            var result = new byte[(int)zipArchiveEntry.Length];
-            stream.Read(result, 0, result.Length);
-            return result;
+            IDbConnection? connection = null;
+            for (var i = 0; ; i++)
+            {
+                try
+                {
+                    connection = new SqlConnection(Database.ConnectionString);
+                    connection.Open();
+                    return connection;
+                }
+                catch
+                {
+                    connection?.Dispose();
+                    if (i == 100)
+                    {
+                        throw;
+                    }
+                    Thread.Sleep(TimeSpan.FromMilliseconds(200));
+                }
+            }
         }
     }
 }
