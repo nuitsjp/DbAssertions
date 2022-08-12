@@ -10,7 +10,6 @@ namespace DbAssertions.Test
 {
     public class ColumnTest
     {
-        [Collection(nameof(SqlDatabaseTest))]
         public class ToExpected
         {
             [Fact]
@@ -169,7 +168,6 @@ namespace DbAssertions.Test
             }
         }
 
-        [Collection(nameof(SqlDatabaseTest))]
         public class Compare
         {
             [Fact]

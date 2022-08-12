@@ -7,13 +7,11 @@ namespace DbAssertions
     {
         public const string DefaultLabel = "HostName";
 
-        internal static IHostNameProvider HostNameProvider { get; set; } = new HostNameProvider();
-
         public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {
             if (Equals(firstCell, secondCell))
             {
-                if (Equals(firstCell, HostNameProvider.GetHostName()))
+                if (Equals(firstCell, Dns.GetHostName()))
                 {
                     return DefaultLabel;
                 }
@@ -31,7 +29,7 @@ namespace DbAssertions
                 return true;
             }
 
-            if (Equals(actualCell, HostNameProvider.GetHostName()))
+            if (Equals(actualCell, Dns.GetHostName()))
             {
                 return true;
             }

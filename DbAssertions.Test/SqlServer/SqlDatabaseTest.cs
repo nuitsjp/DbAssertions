@@ -31,7 +31,6 @@ namespace DbAssertions.Test.SqlServer
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.Default.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Default.Random);
             Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Default.Ignore);
-            HostNameColumnOperator.HostNameProvider = new HostNameProviderStub();
 
             _adventureWorks = AdventureWorks.Start();
 
@@ -43,18 +42,15 @@ namespace DbAssertions.Test.SqlServer
                     Password = AdventureWorks.SaPassword,
                     Encrypt = false
                 }.ToString(),
-                ColumnOperatorProvider.Default);
+                new ColumnOperatorProvider(
+                    new HostNameColumnOperatorStub(),
+                    new RandomColumnOperator(),
+                    new IgnoreColumnOperator()));
         }
 
         public void Dispose()
         {
-            HostNameColumnOperator.HostNameProvider = new HostNameProvider();
             _adventureWorks.Dispose();
-        }
-
-        public class HostNameProviderStub : IHostNameProvider
-        {
-            public string GetHostName() => HostName;
         }
 
         public class FirstShouldBeExported : SqlDatabaseTest
@@ -173,6 +169,41 @@ namespace DbAssertions.Test.SqlServer
                     }
                     Thread.Sleep(TimeSpan.FromMilliseconds(200));
                 }
+            }
+        }
+
+        public class HostNameColumnOperatorStub : IColumnOperator
+        {
+            public const string DefaultLabel = "HostName";
+
+            public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
+            {
+                if (Equals(firstCell, secondCell))
+                {
+                    if (Equals(firstCell, HostName))
+                    {
+                        return DefaultLabel;
+                    }
+
+                    return firstCell;
+                }
+
+                throw DbAssertionsException.FromUnableToExpected(column, rowNumber, firstCell, secondCell);
+            }
+
+            public bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
+            {
+                if (Equals(actualCell, expectedCell))
+                {
+                    return true;
+                }
+
+                if (Equals(actualCell, HostName))
+                {
+                    return true;
+                }
+
+                return false;
             }
         }
     }
