@@ -6,11 +6,6 @@
     public enum SqlColumnType : byte
     {
         /// <summary>
-        /// その他
-        /// </summary>
-        Other,
-
-        /// <summary>
         /// バイナリー
         /// </summary>
         VarBinary = 165,

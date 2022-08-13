@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Text;
 
 namespace DbAssertions.Test
 {
@@ -8,7 +7,6 @@ namespace DbAssertions.Test
     /// </summary>
     public static class FileInfoExtensions
     {
-        private static readonly Encoding Utf8WithoutBom = new UTF8Encoding(false);
         /// <summary>
         /// FileInfoAssertionsを生成する
         /// </summary>

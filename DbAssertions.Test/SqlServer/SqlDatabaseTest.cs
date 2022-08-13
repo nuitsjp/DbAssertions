@@ -7,9 +7,7 @@ using System.Data.SqlClient;
 using Microsoft.Data.SqlClient;
 #endif
 using System.IO;
-using System.IO.Compression;
 using System.Threading;
-using System.Threading.Tasks;
 using Dapper;
 using DbAssertions.SqlServer;
 using FluentAssertions;
@@ -23,7 +21,7 @@ namespace DbAssertions.Test.SqlServer
 
         private static readonly string HostName = "DummyHost";
 
-        protected readonly SqlDatabase Database;
+        protected readonly Database Database;
         protected readonly DbAssertionsConfig Config;
 
         private readonly AdventureWorks _adventureWorks;
@@ -75,6 +73,9 @@ namespace DbAssertions.Test.SqlServer
 #else
                 var expectedPath = @"DatabaseTest\FirstExport\Net6";
 #endif
+
+                Database.DatabaseName.Should().Be("AdventureWorks");
+                Database.ConnectionString.Should().Be($"Data Source=\"localhost, {_adventureWorks.Port}\";Initial Catalog=AdventureWorks;User ID=sa;Password=P@ssw0rd!;Encrypt=False");
 
                 ExecuteNonQuery(@"DatabaseTest\First.sql");
                 Database.FirstExport(_first);
@@ -156,16 +157,15 @@ namespace DbAssertions.Test.SqlServer
         {
             var query = File.ReadAllText(sqlFile).Replace("%HostName%", HostName);
 
-            using var connection = OpenConnection(Database.ConnectionString);
+            using var connection = OpenConnection();
             connection.Execute(query);
         }
 
         /// <summary>
         /// Immediately after docker startup, connection errors occur. Therefore, retry processing is performed.
         /// </summary>
-        /// <param name="connectionString"></param>
         /// <returns></returns>
-        private IDbConnection OpenConnection(string connectionString)
+        private IDbConnection OpenConnection()
         {
             IDbConnection? connection = null;
             for (var i = 0; ; i++)

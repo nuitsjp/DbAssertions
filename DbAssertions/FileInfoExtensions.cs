@@ -8,7 +8,6 @@ namespace DbAssertions
     /// </summary>
     internal static class FileInfoExtensions
     {
-        internal static byte[] ReadAllBytes(this FileInfo fileInfo) => File.ReadAllBytes(fileInfo.FullName);
         internal static string GetSchemaName(this FileInfo fileInfo) => fileInfo.Name.GetSchemaName();
 
         internal static string GetTableName(this FileInfo fileInfo) => fileInfo.Name.GetTableName();

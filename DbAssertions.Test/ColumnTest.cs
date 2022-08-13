@@ -1,6 +1,5 @@
 using System;
 using System.Net;
-using DbAssertions.Test.SqlServer;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using Moq;

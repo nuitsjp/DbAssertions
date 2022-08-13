@@ -51,12 +51,6 @@ namespace DbAssertions
 
             private readonly IList<Column> _columns;
 
-            public CsvRow(dynamic row, IList<Column> columns)
-            {
-                _columns = columns;
-                _cells = ((IDictionary<string, object>)row).Values.Cast<string>().ToArray();
-            }
-
             public CsvRow(IEnumerable<string> cells, IList<Column> columns)
             {
                 _columns = columns;
