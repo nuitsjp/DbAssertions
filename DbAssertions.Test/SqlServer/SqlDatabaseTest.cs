@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Data;
+
+#if NET461
 using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
+#endif
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
@@ -31,6 +36,11 @@ namespace DbAssertions.Test.SqlServer
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.Default.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Default.Random);
             Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Default.Ignore);
+#if NET6_0
+            Config.AddColumnOperator(null, null, "DatabaseLog", "XmlEvent", null, ColumnOperatorProvider.Default.Ignore);
+            Config.AddColumnOperator(null, null, "JobCandidate", "Resume", null, ColumnOperatorProvider.Default.Ignore);
+            Config.AddColumnOperator(null, null, "Address", "SpatialLocation", null, ColumnOperatorProvider.Default.Ignore);
+#endif
 
             _adventureWorks = AdventureWorks.Start();
 
@@ -60,10 +70,16 @@ namespace DbAssertions.Test.SqlServer
             [Fact]
             public void Invoke()
             {
+#if NET461
+                var expectedPath = @"DatabaseTest\FirstExport\NetFramework461";
+#else
+                var expectedPath = @"DatabaseTest\FirstExport\Net6";
+#endif
+
                 ExecuteNonQuery(@"DatabaseTest\First.sql");
                 Database.FirstExport(_first);
                 _first.GetDirectory("First")
-                    .Should().HaveSameContents(new DirectoryInfo(@"DatabaseTest\FirstExport\ToBeExported"));
+                    .Should().HaveSameContents(new DirectoryInfo(expectedPath));
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using FluentAssertions;
 using FluentAssertions.Primitives;
 
@@ -32,13 +33,21 @@ namespace DbAssertions.Test
             string because = "",
             params object[] becauseArgs)
         {
-            Subject.ReadAllText()
-                .Should().Be(
-                    expected.ReadAllText(),
-                    "{0} と {1} のファイル内容が不一致です。",
-                    Subject.FullName,
-                    expected.FullName);
-            return new(this);
+            try
+            {
+                Subject.ReadAllText()
+                    .Should().Be(
+                        expected.ReadAllText(),
+                        "{0} と {1} のファイル内容が不一致です。",
+                        Subject.FullName,
+                        expected.FullName);
+                return new(this);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }
