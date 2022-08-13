@@ -8,16 +8,43 @@ using Newtonsoft.Json.Linq;
 
 namespace DbAssertions
 {
+    /// <summary>
+    /// Settings for using DbAssertions.
+    /// </summary>
     public class DbAssertionsConfig : IDbAssertionsConfig
     {
+        /// <summary>
+        /// Condition to be applied to any table or column.
+        /// </summary>
         private readonly List<ColumnOperatorCondition> _conditions = new();
 
+        /// <summary>
+        /// Add IColumnOperator with applicable conditions.
+        /// </summary>
+        /// <param name="databaseName"></param>
+        /// <param name="schemaName"></param>
+        /// <param name="tableName"></param>
+        /// <param name="columnName"></param>
+        /// <param name="columnType"></param>
+        /// <param name="columnOperator"></param>
         public void AddColumnOperator(string? databaseName, string? schemaName, string? tableName, string? columnName,
             ColumnType? columnType, IColumnOperator columnOperator)
             => _conditions.Add(new ColumnOperatorCondition(databaseName, schemaName, tableName, columnName, columnType, columnOperator));
 
+        /// <summary>
+        /// Default IColumnOperator.
+        /// </summary>
         public IColumnOperator DefaultColumnOperator { get; set; } = new DefaultColumnOperator();
 
+        /// <summary>
+        /// Get IColumnOperator that matches the specified condition column.
+        /// </summary>
+        /// <param name="databaseName"></param>
+        /// <param name="schemaName"></param>
+        /// <param name="tableName"></param>
+        /// <param name="columnName"></param>
+        /// <param name="columnType"></param>
+        /// <returns></returns>
         public IColumnOperator GetColumnOperator(string databaseName, string schemaName, string tableName, string columnName,
             ColumnType columnType)
         {
@@ -29,14 +56,16 @@ namespace DbAssertions
                         && (x.TableName is null || tableName.Contains(x.TableName))
                         && (x.ColumnName is null || columnName.Contains(x.ColumnName))
                         && (x.ColumnType is null || x.ColumnType == columnType));
-            if (columnCondition is not null)
-            {
-                return columnCondition.ColumnOperator;
-            }
-
-            return DefaultColumnOperator;
+            
+            return columnCondition?.ColumnOperator ?? DefaultColumnOperator;
         }
 
+        /// <summary>
+        /// Deserialize the config from the file.
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        /// <exception cref="DbAssertionsException"></exception>
         public static IDbAssertionsConfig Deserialize(string filePath)
         {
             IDbAssertionsConfig config = new DbAssertionsConfig();
@@ -61,6 +90,12 @@ namespace DbAssertions
             return config;
         }
 
+        /// <summary>
+        /// Get ColumnType from the string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        /// <exception cref="DbAssertionsException"></exception>
         private static ColumnType? GetColumnType(string? value)
         {
             if (value.IsNullOrEmpty())
@@ -76,6 +111,9 @@ namespace DbAssertions
             throw new DbAssertionsException($"ColumnType {value} does not exist.");
         }
 
+        /// <summary>
+        /// Condition to apply IColumnOperator.
+        /// </summary>
         private class ColumnOperatorCondition
         {
             public ColumnOperatorCondition(string? databaseName, string? schemaName, string? tableName, string? columnName, ColumnType? columnType, IColumnOperator columnOperator)

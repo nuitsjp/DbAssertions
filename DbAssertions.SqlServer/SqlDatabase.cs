@@ -10,10 +10,21 @@ using System.Data.SqlClient;
 
 namespace DbAssertions.SqlServer
 {
+    /// <summary>
+    /// Database of SQL Server.
+    /// </summary>
     public class SqlDatabase : Database
     {
+        /// <summary>
+        /// Provider of IColumnOperator.
+        /// </summary>
         private readonly IColumnOperatorProvider _columnOperatorProvider;
 
+        /// <summary>
+        /// Create instance.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="columnOperatorProvider"></param>
         public SqlDatabase(string connectionString, IColumnOperatorProvider columnOperatorProvider)
         {
             var builder = new SqlConnectionStringBuilder(connectionString);
@@ -26,27 +37,34 @@ namespace DbAssertions.SqlServer
         }
 
         /// <summary>
-        /// サーバー
+        /// Get server.
         /// </summary>
         public string Server { get; }
 
         /// <summary>
-        /// ユーザーID
+        /// Get user ID.
         /// </summary>
         public string UserId { get; }
 
         /// <summary>
-        /// パスワード
+        /// Get password.
         /// </summary>
         public string Password { get; }
 
+        /// <summary>
+        /// Get database name.
+        /// </summary>
         public override string DatabaseName { get; }
 
         /// <summary>
-        /// 接続文字列を取得する
+        /// Get connection string.
         /// </summary>
         public override string ConnectionString { get; }
 
+        /// <summary>
+        /// Open connection of database.
+        /// </summary>
+        /// <returns></returns>
         public override IDbConnection OpenConnection()
         {
             SqlConnection connection = new(ConnectionString);
@@ -55,7 +73,7 @@ namespace DbAssertions.SqlServer
         }
 
         /// <summary>
-        /// データベースのすべてのユーザーテーブルを取得する。
+        /// Get all user tables in the database.
         /// </summary>
         /// <returns></returns>
         protected override List<Table> GetTables(IDbAssertionsConfig config)
@@ -100,7 +118,7 @@ order by
         }
 
         /// <summary>
-        /// テーブルの列を取得する。
+        /// Get table columns.
         /// </summary>
         /// <returns></returns>
         private List<Column> GetTableColumns(IDbConnection connection, IDbAssertionsConfig config)

@@ -2,14 +2,26 @@
 
 namespace DbAssertions;
 
+/// <summary>
+/// Provide IColumnOperator.
+/// </summary>
 public class ColumnOperatorProvider : IColumnOperatorProvider
 {
+    /// <summary>
+    /// Default provider.
+    /// </summary>
     public static readonly IColumnOperatorProvider Default = 
         new ColumnOperatorProvider(
             new HostNameColumnOperator(),
             new RandomColumnOperator(),
             new IgnoreColumnOperator());
 
+    /// <summary>
+    /// Create instance.
+    /// </summary>
+    /// <param name="hostName"></param>
+    /// <param name="random"></param>
+    /// <param name="ignore"></param>
     public ColumnOperatorProvider(IColumnOperator hostName, IColumnOperator random, IColumnOperator ignore)
     {
         HostName = hostName;
@@ -17,10 +29,27 @@ public class ColumnOperatorProvider : IColumnOperatorProvider
         Ignore = ignore;
     }
 
+    /// <summary>
+    /// Get host name provider.
+    /// </summary>
     public IColumnOperator HostName { get; }
+
+    /// <summary>
+    /// Get random provider.
+    /// </summary>
     public IColumnOperator Random { get; }
+
+    /// <summary>
+    /// Get ignore provider.
+    /// </summary>
     public IColumnOperator Ignore { get; }
 
+    /// <summary>
+    /// Get IColumnOperator.
+    /// </summary>
+    /// <param name="label"></param>
+    /// <param name="columnOperator"></param>
+    /// <returns></returns>
     public bool TryGetColumnOperator(string label, out IColumnOperator columnOperator)
     {
         if (Equals(label, HostNameColumnOperator.DefaultLabel))
@@ -40,20 +69,7 @@ public class ColumnOperatorProvider : IColumnOperatorProvider
         }
 
 
-        columnOperator = new InvalidLabelColumnOperator();
+        columnOperator = default!;
         return false;
-    }
-
-    private class InvalidLabelColumnOperator : IColumnOperator
-    {
-        public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
-        {
-            throw new InvalidOperationException();
-        }
-
-        public bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
-        {
-            throw new InvalidOperationException();
-        }
     }
 }

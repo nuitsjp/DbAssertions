@@ -10,24 +10,24 @@ using CsvHelper;
 namespace DbAssertions
 {
     /// <summary>
-    /// テスト対象のデータベースを表す。
+    /// Database to be tested.
     /// </summary>
     public abstract class Database
     {
         /// <summary>
-        /// データベース
+        /// Database name.
         /// </summary>
         public abstract string DatabaseName { get; }
 
         /// <summary>
-        /// データベース接続文字列
+        /// Database connection string.
         /// </summary>
         public abstract string ConnectionString { get; }
 
         public abstract IDbConnection OpenConnection();
 
         /// <summary>
-        /// 1回目のエクスポートを実行する
+        /// Export the first time.
         /// </summary>
         /// <param name="directoryInfo"></param>
         public void FirstExport(DirectoryInfo directoryInfo)
@@ -43,7 +43,7 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
+        /// Export a second time and create an expected file.
         /// </summary>
         /// <param name="directoryInfo"></param>
         /// <param name="initializeDateTime"></param>
@@ -52,7 +52,7 @@ namespace DbAssertions
             DateTime initializeDateTime) => SecondExport(directoryInfo, initializeDateTime, new DbAssertionsConfig());
 
         /// <summary>
-        /// ２回目のエクスポートを実行し、期待結果ファイルを作成する
+        /// Export a second time and create an expected file.
         /// </summary>
         /// <param name="directoryInfo"></param>
         /// <param name="initializeDateTime"></param>
@@ -65,60 +65,60 @@ namespace DbAssertions
             var firstDirectoryInfo = directoryInfo.GetDirectory("First");
             if (firstDirectoryInfo.NotExist())
             {
-                throw new InvalidOperationException("初回エクスポートフォルダが存在しません");
+                throw new InvalidOperationException("First export folder does not exist.");
             }
 
             var tables = GetTables(config);
 
-            // 2回目のエクスポートディレクトリを作成する
+            // Create a second export directory.
             var secondDirectoryInfo = directoryInfo.GetDirectory("Second");
             secondDirectoryInfo.ReCreate();
-            // 期待結果保管ディレクトリを作成する
+            // Create a directory for expected results.
             var expectedDirectoryInfo = directoryInfo.GetDirectory("Expected");
             expectedDirectoryInfo.ReCreate();
 
-            // １回目のエクスポートファイルから、対象テーブルを取得する。
-            // この時、対象のDBのファイルだけを取得する
+            // Obtain the target table from the first export file.
+            // Retrieve only the target Database file.
             var tableFiles = 
                 firstDirectoryInfo
                     .GetFiles("*.csv");
 
-            // 並列処理で全テーブル分の処理を実施する
+            // Parallel processing for all tables.
             Parallel.ForEach(tableFiles, firstTableFile =>
             {
-                // １回目のファイル名からテーブルオブジェクトを作成する
+                // Create a table object from the first file name.
                 var schemaName = firstTableFile.Name.GetSchemaName();
                 var tableName = firstTableFile.Name.GetTableName();
                 var table = tables.Single(x => x.SchemaName == schemaName && x.TableName == tableName);
 
-                // ２回目のエクスポートを実行する
+                // Export a second time.
                 var secondTableFile = Export(table, secondDirectoryInfo);
 
-                // テキストが不一致の場合、実行ごとに変化のあるセルに対応しつつ期待結果ファイルを作成する
+                // If the text is mismatched, an expected file is created while corresponding to the cells that change with each run.
                 using var expectedCsv = new CsvWriter(
                     new StreamWriter(File.Open(expectedDirectoryInfo.GetFile(firstTableFile.Name).FullName, FileMode.Create)),
                     CultureInfo.InvariantCulture);
 
-                // 1回目と2回目の全CSV行を読み込む
+                // Read all CSV rows for the first and second times.
                 ITableReader tableReader = new TableReader(table.Columns);
                 var firstRecords = tableReader.ReadAllRows(firstTableFile);
                 var secondRecords = tableReader.ReadAllRows(secondTableFile);
 
                 if (firstRecords.Length != secondRecords.Length)
                 {
-                    // 実行ごとに行数が変わるようなケースは対応しない。
-                    // その場合、対象テーブルを除外して個別にテストすること。
-                    throw new DbAssertionsException($@"ファイル {firstTableFile.Name} の行数が一致しませんでした。");
+                    // Cases in which the number of rows changes with each execution are not supported.
+                    // In such cases, the target table should be excluded and tested individually.
+                    throw new DbAssertionsException($@"The number of rows in file {firstTableFile.Name} did not match.");
                 }
 
-                // 行ごとに処理を実施する
+                // Perform processing line by line
                 for (var rowNumber = 0; rowNumber < firstRecords.Length; rowNumber++)
                 {
-                    // 全列をオブジェクト化する
+                    // Objectify all columns
                     var firstRecord = firstRecords[rowNumber];
                     var secondRecord = secondRecords[rowNumber];
 
-                    // 列ごとに処理する
+                    // Process by column.
                     foreach (var column in table.Columns)
                     {
                         var firstRecordCell = (string)firstRecord[column];
@@ -132,7 +132,7 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// データベースの値を比較する
+        /// Compare database with expected.
         /// </summary>
         /// <param name="expectedFileInfo"></param>
         /// <param name="setupCompletionTime"></param>
@@ -150,12 +150,14 @@ namespace DbAssertions
         {
             var tables = GetTables(config);
 
-            // データをExportしたときに文字列化する。その際の精度の問題で開始時刻より、実施時刻が前になることがある
-            // 一旦この形で対応する
-            var timeBeforeStart = DateTime.Parse(setupCompletionTime.ToString(CultureInfo.InvariantCulture));
+            // String the data when it is Exported.
+            // When truncation occurs due to accuracy issues in this process, the time of implementation may be earlier than the start time.
+            // Therefore, the setup time is also truncated by converting it back to a string once.
+            const string dateFormat = "yyyy/MM/dd HH:mm:ss";
+            var timeBeforeStart = DateTime.ParseExact(setupCompletionTime.ToString(dateFormat, CultureInfo.InvariantCulture), dateFormat, null);
 
             CompareResult compareResult = new();
-            // zipファイルから対象データベースのテーブルファイルを取得し、並列処理する
+            // Obtain the table files of the target database from the expectation file and process them in parallel.
             Parallel.ForEach(expectedFileInfo.GetFiles(), tableFile =>
             {
                 var schemaName = tableFile.GetSchemaName();
@@ -163,7 +165,7 @@ namespace DbAssertions
                 var table = tables.SingleOrDefault(x => x.SchemaName == schemaName && x.TableName == tableName);
                 if (table == null)
                 {
-                    compareResult.AddMismatchedMessage($@"期待値の設定されているテーブル [{schemaName}].[{tableName}] がデータベースに存在しませんでした。");
+                    compareResult.AddMismatchedMessage($"The table [{schemaName}].[{tableName}] for which the expectation is set did not exist in the database.");
                     return;
                 }
                 var actualTableFile = Export(table, directoryInfo);
@@ -174,21 +176,21 @@ namespace DbAssertions
                 var actualRecords = tableReader.ReadAllRows(actualTableFile);
                 if (expectedRecords.Length != actualRecords.Length)
                 {
-                    // 実行ごとに行数が変わるようなケースは対応しない。
-                    // その場合、対象テーブルを除外して個別にテストすること。
-                    compareResult.AddMismatchedMessage($@"テーブル {table} の行数が期待値と一致しませんでした。期待値 {expectedRecords.Length} 行、実際値 {actualRecords.Length} 行。");
+                    // Cases in which the number of rows changes with each execution are not supported.
+                    // In such cases, the target table should be excluded and tested individually.
+                    compareResult.AddMismatchedMessage($"The number of rows in table {table} did not match the expected value. Expected {expectedRecords.Length} rows, Actual {actualRecords.Length} rows.");
                     return;
                 }
 
 
-                // 行ごとの処理を実行する
+                // Perform line-by-line processing.
                 for (var rowNumber = 0; rowNumber < expectedRecords.Length; rowNumber++)
                 {
-                    // 全列をオブジェクト化する
+                    // Objectify all columns
                     var expectedRecordRecord = expectedRecords[rowNumber];
                     var actualRecord = actualRecords[rowNumber];
 
-                    // 列ごとに処理する
+                    // Process by column.
                     foreach (var column in table.Columns)
                     {
                         var expectedRecordCell = (string)expectedRecordRecord[column];
@@ -196,8 +198,8 @@ namespace DbAssertions
                         if (!column.Compare(expectedRecordCell, actualRecordCell, timeBeforeStart))
                         {
                             compareResult.AddMismatchedMessage(expectedRecordCell == Column.TimeAfterStart
-                                ? $@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。DB初期化完了時刻 {timeBeforeStart} 、実際値 {actualRecordCell}。"
-                                : $@"{table} テーブル {rowNumber + 1} 行目の {column.ColumnName} 列が一致しませんでした。期待値 {expectedRecordCell} 、実際値 {actualRecordCell}。");
+                                ? $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match, DB initialization completion time {timeBeforeStart}, actual value {actualRecordCell}."
+                                : $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match. expected value {expectedRecordCell}, actual value {actualRecordCell}.");
                         }
                     }
                 }
@@ -207,7 +209,7 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// BCPコマンドを利用し、対象テーブルの値をCSVにエクスポートする。
+        /// Export the table to CSV.
         /// </summary>
         /// <param name="table"></param>
         /// <param name="directoryInfo"></param>
@@ -235,7 +237,7 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// データベースのすべてのユーザーテーブルを取得する。
+        /// Get all user tables.
         /// </summary>
         /// <returns></returns>
         protected abstract List<Table> GetTables(IDbAssertionsConfig config);

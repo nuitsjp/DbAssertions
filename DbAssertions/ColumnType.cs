@@ -1,22 +1,22 @@
 ﻿namespace DbAssertions
 {
     /// <summary>
-    /// カラム型
+    /// Column type.
     /// </summary>
     public enum ColumnType
     {
         /// <summary>
-        /// その他
+        /// Other type.
         /// </summary>
         Other,
 
         /// <summary>
-        /// バイナリー
+        /// varbinary type.
         /// </summary>
         VarBinary,
 
         /// <summary>
-        /// 日時
+        /// datetime type.
         /// </summary>
         DateTime,
     }

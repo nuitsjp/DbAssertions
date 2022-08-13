@@ -1,17 +1,17 @@
 ﻿namespace DbAssertions.SqlServer
 {
     /// <summary>
-    /// カラム型
+    /// Column type.
     /// </summary>
     public enum SqlColumnType : byte
     {
         /// <summary>
-        /// バイナリー
+        /// varbinary.
         /// </summary>
         VarBinary = 165,
 
         /// <summary>
-        /// 日時
+        /// datetime.
         /// </summary>
         DateTime = 61,
 

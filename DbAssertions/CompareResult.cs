@@ -4,27 +4,27 @@ using System.Linq;
 namespace DbAssertions
 {
     /// <summary>
-    /// 比較結果
+    /// Comparison Results
     /// </summary>
     public class CompareResult
     {
         /// <summary>
-        /// 不一致メッセージ
+        /// Mismatched message
         /// </summary>
         private readonly List<string> _mismatchedMessages = new ();
 
         /// <summary>
-        /// 全ての不一致メッセージを取得する
+        /// Get all mismatched messages.
         /// </summary>
         public IEnumerable<string> MismatchedMessages => _mismatchedMessages;
 
         /// <summary>
-        /// 不一致有無を取得する
+        /// Get existence of a mismatch.
         /// </summary>
         public bool HasMismatched => _mismatchedMessages.Any();
 
         /// <summary>
-        /// 不一致メッセージを追加する
+        /// Add a mismatch message.
         /// </summary>
         /// <param name="message"></param>
         public void AddMismatchedMessage(string message) => _mismatchedMessages.Add(message);

@@ -4,7 +4,7 @@ using System.Linq;
 namespace DbAssertions
 {
     /// <summary>
-    /// テーブルカラムを表すクラス
+    /// Table column classes.
     /// </summary>
     public class Column
     {
@@ -12,8 +12,9 @@ namespace DbAssertions
         /// String representing the time before the start.
         /// </summary>
         internal const string TimeBeforeStart = "TimeBeforeStart";
+
         /// <summary>
-        /// 実行ごとに値が変わるセルを表す文字列
+        /// String representing a cell whose value changes with each execution.
         /// </summary>
         internal const string TimeAfterStart = "TimeAfterStart";
 
@@ -21,7 +22,7 @@ namespace DbAssertions
         private readonly IColumnOperatorProvider _columnOperatorProvider;
 
         /// <summary>
-        /// インスタンスを生成する。
+        /// Create an instance.
         /// </summary>
         /// <param name="databaseName"></param>
         /// <param name="schemaName"></param>
@@ -55,36 +56,42 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// データベース名
+        /// Get database name
         /// </summary>
         public string DatabaseName { get; }
 
         /// <summary>
-        /// スキーマ名
+        /// Get schema name
         /// </summary>
         public string SchemaName { get; }
 
         /// <summary>
-        /// テーブル名
+        /// Get table name
         /// </summary>
         public string TableName { get; }
 
         /// <summary>
-        /// カラム名
+        /// Get column name
         /// </summary>
         public string ColumnName { get; }
 
         /// <summary>
-        /// カラム型
+        /// Get column type
         /// </summary>
         public ColumnType ColumnType { get; }
 
+        /// <summary>
+        /// Obtain whether it is a primary key or not
+        /// </summary>
         public bool IsPrimaryKey { get; }
 
+        /// <summary>
+        /// Get primary key order
+        /// </summary>
         public int PrimaryKeyOrdinal { get; }
 
         /// <summary>
-        /// 値を比較し、期待結果ファイルに設定すべき値に変換する
+        /// The values are compared and converted to values that should be set in the expected result file.
         /// </summary>
         /// <param name="firstCell"></param>
         /// <param name="secondCell"></param>
@@ -93,12 +100,13 @@ namespace DbAssertions
         /// <returns></returns>
         internal string ToExpected(string firstCell, string secondCell, int rowNumber, DateTime initializedDateTime)
         {
-            if (_columnOperator is IgnoreColumnOperator)
+            if (_columnOperator is IgnoreColumnOperator or HostNameColumnOperator)
             {
-                return _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
-            }
-            if (_columnOperator is HostNameColumnOperator)
-            {
+                // In the case of host names, the first and second values are the same.
+                // However, at the time of testing, the values will be different when run on other hosts.
+                // Therefore, set a string representing the host name.
+                // In the case of Ignore, the first and second times may happen to coincide.
+                // Therefore, always set a string representing Ignore.
                 return _columnOperator.ToExpected(this, rowNumber, firstCell, secondCell);
             }
 
@@ -109,9 +117,10 @@ namespace DbAssertions
 
             if (firstCell.Any() && secondCell.Any())
             {
+                // If both the first and second time have a value and are of different date types, then
                 if (ColumnType == ColumnType.DateTime)
                 {
-                    // いずれの値も空ではなかった場合、日付に変換する
+                    // The value to be set is determined by comparing it with the time at the time of database initialization.
                     var secondDateTime = DateTime.Parse(secondCell);
                     if (secondDateTime <= initializedDateTime)
                     {
@@ -126,7 +135,7 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// 値を比較する
+        /// Compare values.
         /// </summary>
         /// <param name="expectedCell"></param>
         /// <param name="actualCell"></param>
@@ -134,20 +143,25 @@ namespace DbAssertions
         /// <returns></returns>
         internal bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
         {
+            // Obtain the target operator from the description of the expected value cell.
             if (_columnOperatorProvider.TryGetColumnOperator(expectedCell, out var columnOperator))
             {
                 return columnOperator.Compare(expectedCell, actualCell, timeBeforeStart);
             }
 
+            // If the operator could not be determined from the expected value cell, the values are first simply compared.
             if (Equals(expectedCell, actualCell))
             {
                 return true;
             }
 
+
             if (expectedCell.Any() && expectedCell.Any())
             {
+                // If both the first and second time have a value and are of different date types, then
                 if (ColumnType == ColumnType.DateTime)
                 {
+                    // 日付オブジェクトに変換し、
                     var secondDateTime = DateTime.Parse(actualCell);
                     if (Equals(expectedCell, TimeBeforeStart)
                         && secondDateTime <= timeBeforeStart)

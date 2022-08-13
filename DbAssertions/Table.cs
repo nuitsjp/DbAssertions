@@ -5,12 +5,12 @@ using System.Linq;
 namespace DbAssertions
 {
     /// <summary>
-    /// テーブルを表すクラス
+    /// Class representing a table
     /// </summary>
     public class Table
     {
         /// <summary>
-        /// インスタンスを生成する
+        /// Create instance.
         /// </summary>
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
@@ -23,15 +23,18 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// スキーマ名を取得する
+        /// Get schema name.
         /// </summary>
         public string SchemaName { get; }
 
         /// <summary>
-        /// テーブル名を取得する
+        /// Get table name.
         /// </summary>
         public string TableName { get; }
 
+        /// <summary>
+        /// Get columns.
+        /// </summary>
         public IList<Column> Columns { get; }
 
         private string[] PrimaryKeys
@@ -47,11 +50,16 @@ namespace DbAssertions
         }
 
         /// <summary>
-        /// 文字列表現を取得する
+        /// Get a string representation.
         /// </summary>
         /// <returns></returns>
         public override string ToString() => $"[{SchemaName}].[{TableName}]";
 
+        /// <summary>
+        /// Read all rows.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <returns></returns>
         internal IEnumerable<IRow> ReadAllRows(IDbConnection connection)
         {
             var primaryKeys = PrimaryKeys;
@@ -77,15 +85,28 @@ from
             }
         }
 
+        /// <summary>
+        /// Row of table.
+        /// </summary>
         private class DatabaseRow : IRow
         {
+
             private readonly IDataReader _dataReader;
 
+            /// <summary>
+            /// Create instance.
+            /// </summary>
+            /// <param name="dataReader"></param>
             public DatabaseRow(IDataReader dataReader)
             {
                 _dataReader = dataReader;
             }
 
+            /// <summary>
+            /// Get the cell in the specified column.
+            /// </summary>
+            /// <param name="column"></param>
+            /// <returns></returns>
             public object this[Column column] => _dataReader[column.ColumnName];
         }
     }

@@ -2,8 +2,19 @@
 
 namespace DbAssertions
 {
+    /// <summary>
+    /// Default IColumnOperator.
+    /// </summary>
     public class DefaultColumnOperator : IColumnOperator
     {
+        /// <summary>
+        /// Convert to expected.
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="rowNumber"></param>
+        /// <param name="firstCell"></param>
+        /// <param name="secondCell"></param>
+        /// <returns></returns>
         public string ToExpected(Column column, int rowNumber, string firstCell, string secondCell)
         {
             if (Equals(firstCell, secondCell))
@@ -15,16 +26,16 @@ namespace DbAssertions
             throw DbAssertionsException.FromUnableToExpected(column, rowNumber, firstCell, secondCell);
         }
 
+        /// <summary>
+        /// Compare the actual with the expected.
+        /// </summary>
+        /// <param name="expectedCell"></param>
+        /// <param name="actualCell"></param>
+        /// <param name="timeBeforeStart"></param>
+        /// <returns></returns>
         public bool Compare(string expectedCell, string actualCell, DateTime timeBeforeStart)
         {
-            if (Equals(expectedCell, actualCell))
-            {
-                // 値が一致
-                return true;
-            }
-
-            // それ以外は不一致
-            return false;
+            return Equals(expectedCell, actualCell);
         }
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Linq;
 
 namespace DbAssertions
 {
     /// <summary>
-    /// アサーションエラーを表す例外
+    /// Exception to assertion error.
     /// </summary>
     public class DbAssertionsException : Exception
     {
         /// <summary>
-        /// インスタンスを生成する
+        /// Create instance.
         /// </summary>
         /// <param name="message"></param>
         public DbAssertionsException(string message) : base(message){}
