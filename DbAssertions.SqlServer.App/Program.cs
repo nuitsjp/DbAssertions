@@ -22,16 +22,16 @@ namespace DbAssertions.SqlServer.App
         }
 
         /// <summary>
-        /// １回目のデータのエクスポート
+        /// First database export.
         /// </summary>
         [Command("first")]
         // ReSharper disable once UnusedMember.Global
         public void First(
-            [Option("s", "サーバー")] string server,
-            [Option("d", "データベース")] string database,
-            [Option("u", "ユーザー")] string userId,
-            [Option("p", "パスワード")] string password,
-            [Option("o", "エクスポートディレクトリ")] string output = "output")
+            [Option("s", "Server")] string server,
+            [Option("d", "Database")] string database,
+            [Option("u", "User ID")] string userId,
+            [Option("p", "Password")] string password,
+            [Option("o", "Export directory")] string output = "output")
         {
 
             new SqlDatabase(
@@ -52,12 +52,12 @@ namespace DbAssertions.SqlServer.App
         [Command("second")]
         // ReSharper disable once UnusedMember.Global
         public void Second(
-            [Option("s", "サーバー")] string server,
-            [Option("d", "データベース")] string database,
-            [Option("u", "ユーザー")] string userId,
-            [Option("p", "パスワード")] string password,
-            [Option("i", "初期化完了時刻")] string initializedDateTime,
-            [Option("o", "エクスポートディレクトリ")] string output = "output")
+            [Option("s", "Server")] string server,
+            [Option("d", "Database")] string database,
+            [Option("u", "User ID")] string userId,
+            [Option("p", "Password")] string password,
+            [Option("i", "Database initialization completion time")] string initializedDateTime,
+            [Option("o", "Export directory")] string output = "output")
         {
             using var processModule = Process.GetCurrentProcess().MainModule!;
             var configPath = Path.Combine(Path.GetDirectoryName(processModule.FileName)!, "DbAssertions.json");
