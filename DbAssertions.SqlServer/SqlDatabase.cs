@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 #if NETSTANDARD2_0
+using System.Runtime.Loader;
 using Microsoft.Data.SqlClient;
+using Microsoft.SqlServer.Types;
 #else
 using System.Data.SqlClient;
 #endif
@@ -19,6 +22,49 @@ namespace DbAssertions.SqlServer
         /// Provider of IColumnOperator.
         /// </summary>
         private readonly IColumnOperatorProvider _columnOperatorProvider;
+
+        static SqlDatabase()
+        {
+#if NETSTANDARD2_0
+            AssemblyLoadContext.Default.Resolving += OnAssemblyResolve;
+#endif
+
+        }
+
+#if NETSTANDARD2_0
+        static Assembly OnAssemblyResolve(AssemblyLoadContext assemblyLoadContext, AssemblyName assemblyName)
+        {
+            try
+            {
+                AssemblyLoadContext.Default.Resolving -= OnAssemblyResolve;
+                return assemblyLoadContext.LoadFromAssemblyName(assemblyName);
+            }
+            catch
+            {
+                if (assemblyName.Name == "Microsoft.SqlServer.Types")
+                    return typeof(SqlGeography).Assembly;
+                throw;
+            }
+            finally
+            {
+                AssemblyLoadContext.Default.Resolving += OnAssemblyResolve;
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Create instance.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public SqlDatabase(string connectionString) : 
+            this(
+                connectionString,
+                new ColumnOperatorProvider(
+                    new HostNameColumnOperator(),
+                    new RandomColumnOperator(),
+                    new IgnoreColumnOperator()))
+        {
+        }
 
         /// <summary>
         /// Create instance.

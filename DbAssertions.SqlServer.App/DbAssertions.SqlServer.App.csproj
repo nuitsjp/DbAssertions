@@ -1,34 +1,40 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net461;net6</TargetFrameworks>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-    <Version>0.0.17-pre</Version>
-    <Authors>Atsushi Nakamura</Authors>
-    <Company>Atsushi Nakamura</Company>
-    <Copyright>Copyright nuits.jp</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>net6.0</TargetFrameworks>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<Version>0.0.18-pre</Version>
+		<Authors>Atsushi Nakamura</Authors>
+		<Company>Atsushi Nakamura</Company>
+		<Copyright>Copyright nuits.jp</Copyright>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ConsoleAppFramework" Version="3.3.2" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ConsoleAppFramework" Version="3.3.2" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-	  <PackageReference Include="Microsoft.SqlServer.Types" Version="10.50.1600.1" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="dotMorten.Microsoft.SqlServer.Types" Version="2.5.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DbAssertions.SqlServer\DbAssertions.SqlServer.csproj" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
+		<PackageReference Include="Microsoft.SqlServer.Types" Version="10.50.1600.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="DbAssertions.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DbAssertions.SqlServer\DbAssertions.SqlServer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="DbAssertions.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
 </Project>
