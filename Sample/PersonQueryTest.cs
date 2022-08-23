@@ -64,12 +64,21 @@ namespace Sample
             // Run
             await connection.ExecuteAsync(Properties.Resources.UpdateTitle);
 
+            // Assertions
             var database = new SqlDatabase(BuildConnectionString());
-            database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion);
+            database.Should().BeExpected(new DirectoryInfo("Expected\\Expected"), setupCompletion);
         }
 
-        private static string BuildConnectionString() =>
-            new SqlConnectionStringBuilder
+        public void Dispose()
+        {
+            _dockerClient.Containers
+                .RemoveContainerAsync(_containerId, new ContainerRemoveParameters { Force = true })
+                .GetAwaiter().GetResult();
+        }
+
+        private static string BuildConnectionString()
+        {
+            return new SqlConnectionStringBuilder
             {
                 DataSource = "localhost",
                 InitialCatalog = "AdventureWorks",
@@ -77,6 +86,7 @@ namespace Sample
                 Password = SaPassword,
                 Encrypt = false
             }.ToString();
+        }
 
         /// <summary>
         /// Immediately after docker startup, connection errors occur. Therefore, retry processing is performed.
@@ -105,21 +115,6 @@ namespace Sample
                     }
                     Thread.Sleep(TimeSpan.FromMilliseconds(200));
                 }
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _dockerClient.Containers.RemoveContainerAsync(_containerId, new ContainerRemoveParameters { Force = true })
-                    .GetAwaiter().GetResult();
             }
         }
     }

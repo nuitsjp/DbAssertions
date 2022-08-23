@@ -1,3 +1,5 @@
+if(Test-Path "..\bin") { Remove-Item ..\bin -Recurse -Force }
+
 $project = '..\..\DbAssertions.SqlServer.App\DbAssertions.SqlServer.App.csproj'
 $output = '..\bin\Debug\DbAssertions.SqlServer.App'
 
