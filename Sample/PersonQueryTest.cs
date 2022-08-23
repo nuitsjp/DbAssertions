@@ -65,12 +65,7 @@ namespace Sample
             await connection.ExecuteAsync(Properties.Resources.UpdateTitle);
 
             var database = new SqlDatabase(BuildConnectionString());
-            var dbAssertionsConfig = new DbAssertionsConfig();
-            //dbAssertionsConfig.AddColumnOperator(null, null, "DatabaseLog", "XmlEvent", null, ColumnOperatorProvider.Default.Ignore);
-            //dbAssertionsConfig.AddColumnOperator(null, null, "JobCandidate", "Resume", null, ColumnOperatorProvider.Default.Ignore);
-            //dbAssertionsConfig.AddColumnOperator(null, null, "Address", "SpatialLocation", null, ColumnOperatorProvider.Default.Ignore);
-            database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion, dbAssertionsConfig);
-
+            database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion);
         }
 
         private static string BuildConnectionString() =>

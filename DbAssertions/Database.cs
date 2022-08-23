@@ -198,8 +198,8 @@ namespace DbAssertions
                         if (!column.Compare(expectedRecordCell, actualRecordCell, timeBeforeStart))
                         {
                             compareResult.AddMismatchedMessage(expectedRecordCell == Column.TimeAfterStart
-                                ? $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match, DB initialization completion time {timeBeforeStart}, actual value {actualRecordCell}."
-                                : $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match. expected value {expectedRecordCell}, actual value {actualRecordCell}.");
+                                ? $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match, DB initialization completion time [{timeBeforeStart}], actual value [{actualRecordCell}]."
+                                : $"Column {column.ColumnName} in row {rowNumber + 1} of table {table} did not match. expected value [{expectedRecordCell}], actual value [{actualRecordCell}].");
                         }
                     }
                 }
