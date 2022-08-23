@@ -7,5 +7,5 @@ SET
 WHERE
 	BusinessEntityID = 1
 
-SELECT * FROM Person.Person
+SELECT Person.ModifiedDate, * FROM Person.Person
 SELECT GETDATE() as ‰Šú‰»Š®—¹

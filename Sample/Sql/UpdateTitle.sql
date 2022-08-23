@@ -8,4 +8,4 @@ SET
 WHERE
         BusinessEntityID = 2
 
-select * from Person.Person
+SELECT Person.ModifiedDate, * FROM Person.Person
