@@ -8,4 +8,4 @@ WHERE
 	BusinessEntityID = 1
 
 SELECT Person.ModifiedDate, * FROM Person.Person
-SELECT GETDATE() as ‰Šú‰»Š®—¹
+SELECT GETDATE() as åˆæœŸåŒ–å®Œäº†æ™‚åˆ»
