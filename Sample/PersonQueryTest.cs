@@ -66,7 +66,7 @@ namespace Sample
 
             // Assertions
             var database = new SqlDatabase(BuildConnectionString());
-            database.Should().BeExpected(new DirectoryInfo(Path.Join("Expected", "Expected")), setupCompletion);
+            database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion);
         }
 
         public void Dispose()
