@@ -58,15 +58,15 @@ namespace Sample
         {
             // Initialize
             using var connection = OpenConnection();
-            await connection.ExecuteAsync(await File.ReadAllTextAsync(@"Sql\Initialize.sql"));
+            await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql","Initialize.sql")));
             var setupCompletion = connection.ExecuteScalar<DateTime>("select GETDATE()");
 
             // Run
-            await connection.ExecuteAsync(await File.ReadAllTextAsync(@"Sql\UpdateTitle.sql"));
+            await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql", "UpdateTitle.sql")));
 
             // Assertions
             var database = new SqlDatabase(BuildConnectionString());
-            database.Should().BeExpected(new DirectoryInfo("Expected\\Expected"), setupCompletion);
+            database.Should().BeExpected(new DirectoryInfo(Path.Join("Expected", "Expected")), setupCompletion);
         }
 
         public void Dispose()
