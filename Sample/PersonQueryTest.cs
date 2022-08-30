@@ -58,11 +58,11 @@ namespace Sample
         {
             // Initialize
             using var connection = OpenConnection();
-            await connection.ExecuteAsync(Properties.Resources.Initialize);
+            await connection.ExecuteAsync(await File.ReadAllTextAsync(@"Sql\Initialize.sql"));
             var setupCompletion = connection.ExecuteScalar<DateTime>("select GETDATE()");
 
             // Run
-            await connection.ExecuteAsync(Properties.Resources.UpdateTitle);
+            await connection.ExecuteAsync(await File.ReadAllTextAsync(@"Sql\UpdateTitle.sql"));
 
             // Assertions
             var database = new SqlDatabase(BuildConnectionString());
