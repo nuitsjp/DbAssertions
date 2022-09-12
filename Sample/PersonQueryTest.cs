@@ -53,21 +53,21 @@ namespace Sample
             _dockerClient.Containers.StartContainerAsync(_containerId, new()).GetAwaiter().GetResult();
         }
 
-        [Fact]
-        public async Task UpdateTitle()
-        {
-            // Initialize
-            using var connection = OpenConnection();
-            await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql","Initialize.sql")));
-            var setupCompletion = connection.ExecuteScalar<DateTime>("select GETDATE()");
+        //[Fact]
+        //public async Task UpdateTitle()
+        //{
+        //    // Initialize
+        //    using var connection = OpenConnection();
+        //    await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql","Initialize.sql")));
+        //    var setupCompletion = connection.ExecuteScalar<DateTime>("select GETDATE()");
 
-            // Run
-            await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql", "UpdateTitle.sql")));
+        //    // Run
+        //    await connection.ExecuteAsync(await File.ReadAllTextAsync(Path.Join("Sql", "UpdateTitle.sql")));
 
-            // Assertions
-            var database = new SqlDatabase(BuildConnectionString());
-            database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion);
-        }
+        //    // Assertions
+        //    var database = new SqlDatabase(BuildConnectionString());
+        //    database.Should().BeExpected(new DirectoryInfo("Expected"), setupCompletion);
+        //}
 
         public void Dispose()
         {
