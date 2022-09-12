@@ -34,8 +34,8 @@ namespace DbAssertions.Test.SqlServer
             Config.AddColumnOperator(null, null, "Person", "Suffix", null, ColumnOperatorProvider.Default.HostName);
             Config.AddColumnOperator(null, null, "Person", "FirstName", null, ColumnOperatorProvider.Default.Random);
             Config.AddColumnOperator(null, null, "Person", "PersonType", null, ColumnOperatorProvider.Default.Ignore);
-#if NET6_0
             Config.AddColumnOperator(null, null, "DatabaseLog", "XmlEvent", null, ColumnOperatorProvider.Default.Ignore);
+#if NET6_0
             Config.AddColumnOperator(null, null, "JobCandidate", "Resume", null, ColumnOperatorProvider.Default.Ignore);
             Config.AddColumnOperator(null, null, "Address", "SpatialLocation", null, ColumnOperatorProvider.Default.Ignore);
 #endif

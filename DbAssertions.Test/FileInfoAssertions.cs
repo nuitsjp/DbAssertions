@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using FluentAssertions;
+using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 
 namespace DbAssertions.Test
@@ -35,13 +37,18 @@ namespace DbAssertions.Test
         {
             try
             {
-                Subject.ReadAllText()
-                    .Should().Be(
-                        expected.ReadAllText(),
-                        "{0} と {1} のファイル内容が不一致です。",
+                if (Equals(Subject.ReadAllText(), expected.ReadAllText()))
+                {
+                    return new AndConstraint<FileInfoAssertions>(this);
+                }
+
+                throw new AssertionFailedException(
+                    string.Format(
+                        string.IsNullOrEmpty(because)
+                            ? "{0} と {1} のファイル内容が不一致です。"
+                            : because,
                         Subject.FullName,
-                        expected.FullName);
-                return new(this);
+                        expected.FullName));
             }
             catch (Exception e)
             {
