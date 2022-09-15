@@ -1,6 +1,7 @@
 name: .NET
 
 on:
+  # mainへのプルリクエスト作成時にビルドする
   push:
     branches: [ "main" ]
   pull_request:
@@ -11,15 +12,23 @@ jobs:
 
     runs-on: windows-latest
 
+    # リポジトリのチェックアウト
     steps:
     - uses: actions/checkout@v3
+
+    # .NET 6.0.xの最新版を利用する
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+
+    # パッケージをリストアする
     - name: Restore dependencies
       run: dotnet restore --runtime win10-x64
+
+    # モジュールをビルドする
     - name: Build
       run: dotnet build .\DbAssertions.Test\DbAssertions.Test.csproj --runtime win10-x64 --no-restore
-    - name: Test
-      run: dotnet test --runtime win10-x64 --no-build --verbosity normal
+
+    # - name: Test
+    #   run: dotnet test --runtime win10-x64 --no-build --verbosity normal
